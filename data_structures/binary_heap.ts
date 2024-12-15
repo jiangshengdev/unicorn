@@ -3,30 +3,29 @@
 
 import { descend } from './comparators.ts';
 
-/** Swaps the values at two indexes in an array. */
+/** 交换数组中两个索引处的值。 */
 function swap<T>(array: T[], a: number, b: number) {
   const temp = array[a];
   array[a] = array[b]!;
   array[b] = temp!;
 }
 
-/** Returns the parent index for a child index. */
+/** 返回子索引的父索引。 */
 function getParentIndex(index: number) {
   return Math.floor((index + 1) / 2) - 1;
 }
 
 /**
- * A priority queue implemented with a binary heap. The heap is in descending
- * order by default, using JavaScript's built-in comparison operators to sort
- * the values.
+ * 使用二叉堆实现的优先队列。堆默认为降序，
+ * 使用 JavaScript 的内置比较操作符对值进行排序。
  *
- * | Method      | Average Case | Worst Case |
- * | ----------- | ------------ | ---------- |
- * | peek()      | O(1)         | O(1)       |
- * | pop()       | O(log n)     | O(log n)   |
- * | push(value) | O(1)         | O(log n)   |
+ * | 方法        | 平均情况 | 最坏情况 |
+ * | ----------- | -------- | -------- |
+ * | peek()      | O(1)     | O(1)     |
+ * | pop()       | O(log n) | O(log n) |
+ * | push(value) | O(1)     | O(log n) |
  *
- * @example Usage
+ * @example 用法
  * ```ts
  * import {
  *   ascend,
@@ -57,16 +56,16 @@ function getParentIndex(index: number) {
  * assertEquals([...words], []);
  * ```
  *
- * @typeparam T The type of the values stored in the binary heap.
+ * @typeparam T 二叉堆中存储的值的类型。
  */
 export class BinaryHeap<T> implements Iterable<T> {
   #data: T[] = [];
   #compare: (a: T, b: T) => number;
 
   /**
-   * Construct an empty binary heap.
+   * 构造一个空的二叉堆。
    *
-   * @param compare A custom comparison function to sort the values in the heap. By default, the values are sorted in descending order.
+   * @param compare 自定义比较函数，用于对堆中的值进行排序。默认情况下，值按降序排序。
    */
   constructor(compare: (a: T, b: T) => number = descend) {
     if (typeof compare !== 'function') {
@@ -78,9 +77,9 @@ export class BinaryHeap<T> implements Iterable<T> {
   }
 
   /**
-   * Returns the underlying cloned array in arbitrary order without sorting.
+   * 返回未排序的底层克隆数组。
    *
-   * @example Getting the underlying array
+   * @example 获取底层数组
    * ```ts
    * import { BinaryHeap } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -90,36 +89,33 @@ export class BinaryHeap<T> implements Iterable<T> {
    * assertEquals(heap.toArray(), [ 5, 4, 3, 1, 2 ]);
    * ```
    *
-   * @returns An array containing the values in the binary heap.
+   * @returns 一个包含二叉堆中值的数组。
    */
   toArray(): T[] {
     return Array.from(this.#data);
   }
 
   /**
-   * Creates a new binary heap from an array like, an iterable object, or an
-   * existing binary heap.
+   * 从类似数组、可迭代对象或现有二叉堆创建一个新的二叉堆。
    *
-   * A custom comparison function can be provided to sort the values in a
-   * specific order. By default, the values are sorted in descending order,
-   * unless a {@link BinaryHeap} is passed, in which case the comparison
-   * function is copied from the input heap.
+   * 可以提供自定义比较函数以按特定顺序对值进行排序。默认情况下，值按降序排序，
+   * 除非传递了 {@link BinaryHeap}，此时比较函数将从输入堆中复制。
    *
-   * @example Creating a binary heap from an array like
+   * @example 从类似数组创建二叉堆
    * ```ts no-assert
    * import { BinaryHeap } from "@std/data-structures";
    *
    * const heap = BinaryHeap.from([4, 1, 3, 5, 2]);
    * ```
    *
-   * @example Creating a binary heap from an iterable object
+   * @example 从可迭代对象创建二叉堆
    * ```ts no-assert
    * import { BinaryHeap } from "@std/data-structures";
    *
    * const heap = BinaryHeap.from((function*() { yield* [4, 1, 3, 5, 2]; })());
    * ```
    *
-   * @example Creating a binary heap from an existing binary heap
+   * @example 从现有二叉堆创建二叉堆
    * ```ts no-assert
    * import { BinaryHeap } from "@std/data-structures";
    *
@@ -127,17 +123,17 @@ export class BinaryHeap<T> implements Iterable<T> {
    * const copy = BinaryHeap.from(heap);
    * ```
    *
-   * @example Creating a binary heap from an array like with a custom comparison function
+   * @example 从类似数组创建具有自定义比较函数的二叉堆
    * ```ts no-assert
    * import { BinaryHeap, ascend } from "@std/data-structures";
    *
    * const heap = BinaryHeap.from([4, 1, 3, 5, 2], { compare: ascend });
    * ```
    *
-   * @typeparam T The type of the values stored in the binary heap.
-   * @param collection An array like, an iterable object, or an existing binary heap.
-   * @param options An optional options object to customize the comparison function.
-   * @returns A new binary heap containing the values from the passed collection.
+   * @typeparam T 二叉堆中存储的值的类型。
+   * @param collection 类似数组、可迭代对象或现有二叉堆。
+   * @param options 可选的选项对象，用于自定义比较函数。
+   * @returns 一个包含传递集合中值的新二叉堆。
    */
   static from<T>(
     collection: ArrayLike<T> | Iterable<T> | BinaryHeap<T>,
@@ -146,31 +142,27 @@ export class BinaryHeap<T> implements Iterable<T> {
     },
   ): BinaryHeap<T>;
   /**
-   * Creates a new binary heap from an array like, an iterable object, or an
-   * existing binary heap.
+   * 从类似数组、可迭代对象或现有二叉堆创建一个新的二叉堆。
    *
-   * A custom mapping function can be provided to transform the values before
-   * inserting them into the heap.
+   * 可以提供自定义映射函数以在将值插入堆之前对其进行转换。
    *
-   * A custom comparison function can be provided to sort the values in a
-   * specific order. By default, the values are sorted in descending order,
-   * unless a {@link BinaryHeap} is passed, in which case the comparison
-   * function is copied from the input heap. The comparison operator is used to
-   * sort the values in the heap after mapping the values.
+   * 可以提供自定义比较函数以按特定顺序对值进行排序。默认情况下，值按降序排序，
+   * 除非传递了 {@link BinaryHeap}，此时比较函数将从输入堆中复制。比较运算符用于
+   * 在映射值后对堆中的值进行排序。
    *
-   * @example Creating a binary heap from an array like with a custom mapping function
+   * @example 从类似数组创建具有自定义映射函数的二叉堆
    * ```ts ignore
    * import { BinaryHeap } from "@std/data-structures";
    *
    * const heap = BinaryHeap.from([4, 1, 3, 5, 2], { map: (value) => value * 2 });
    * ```
    *
-   * @typeparam T The type of the values in the passed collection.
-   * @typeparam U The type of the values stored in the binary heap.
-   * @typeparam V The type of the `this` value when calling the mapping function. Defaults to `undefined`.
-   * @param collection An array like, an iterable object, or an existing binary heap.
-   * @param options The options object to customize the mapping and comparison functions. The `thisArg` property can be used to set the `this` value when calling the mapping function.
-   * @returns A new binary heap containing the mapped values from the passed collection.
+   * @typeparam T 传递集合中值的类型。
+   * @typeparam U 二叉堆中存储的值的类型。
+   * @typeparam V 调用映射函数时的 `this` 值的类型。默认为 `undefined`。
+   * @param collection 类似数组、可迭代对象或现有二叉堆。
+   * @param options 用于自定义映射和比较函数的选项对象。`thisArg` 属性可用于设置调用映射函数时的 `this` 值。
+   * @returns 一个包含传递集合中映射值的新二叉堆。
    */
   static from<T, U, V = undefined>(
     collection: ArrayLike<T> | Iterable<T> | BinaryHeap<T>,
@@ -213,11 +205,11 @@ export class BinaryHeap<T> implements Iterable<T> {
   }
 
   /**
-   * The count of values stored in the binary heap.
+   * 返回二叉堆中存储值的数量。
    *
-   * The complexity of this operation is O(1).
+   * 该操作的时间复杂度为 O(1)。
    *
-   * @example Getting the length of the binary heap
+   * @example 获取二叉堆的长度
    * ```ts
    * import { BinaryHeap } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -227,19 +219,18 @@ export class BinaryHeap<T> implements Iterable<T> {
    * assertEquals(heap.length, 5);
    * ```
    *
-   * @returns The count of values stored in the binary heap.
+   * @returns 二叉堆中存储值的数量。
    */
   get length(): number {
     return this.#data.length;
   }
 
   /**
-   * Get the greatest value from the binary heap without removing it, or
-   * undefined if the heap is empty.
+   * 获取二叉堆中最大的值而不移除它，或者如果堆为空则返回 undefined。
    *
-   * The complexity of this operation is O(1).
+   * 该操作的时间复杂度为 O(1)。
    *
-   * @example Getting the greatest value from the binary heap
+   * @example 获取二叉堆中的最大值
    * ```ts
    * import { BinaryHeap } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -249,7 +240,7 @@ export class BinaryHeap<T> implements Iterable<T> {
    * assertEquals(heap.peek(), 5);
    * ```
    *
-   * @example Getting the greatest value from an empty binary heap
+   * @example 从空的二叉堆中获取最大值
    * ```ts
    * import { BinaryHeap } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -259,17 +250,16 @@ export class BinaryHeap<T> implements Iterable<T> {
    * assertEquals(heap.peek(), undefined);
    * ```
    *
-   * @returns The greatest value from the binary heap, or undefined if it is empty.
+   * @returns 二叉堆中的最大值，或者如果堆为空则返回 undefined。
    */
   peek(): T | undefined {
     return this.#data[0];
   }
 
   /**
-   * Remove the greatest value from the binary heap and return it, or return
-   * undefined if the heap is empty.
+   * 移除二叉堆中的最大值并返回它，或者如果堆为空则返回 undefined。
    *
-   * @example Removing the greatest value from the binary heap
+   * @example 从二叉堆中移除最大值
    * ```ts
    * import { BinaryHeap } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -280,10 +270,9 @@ export class BinaryHeap<T> implements Iterable<T> {
    * assertEquals([...heap], [4, 3, 2, 1]);
    * ```
    *
-   * The complexity of this operation is on average and worst case O(log n),
-   * where n is the count of values stored in the binary heap.
+   * 该操作的时间复杂度在平均和最坏情况下为 O(log n)，其中 n 是二叉堆中存储值的数量。
    *
-   * @example Removing the greatest value from an empty binary heap
+   * @example 从空的二叉堆中移除最大值
    * ```ts
    * import { BinaryHeap } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -293,7 +282,7 @@ export class BinaryHeap<T> implements Iterable<T> {
    * assertEquals(heap.pop(), undefined);
    * ```
    *
-   * @returns The greatest value from the binary heap, or undefined if the heap is empty.
+   * @returns 二叉堆中的最大值，或者如果堆为空则返回 undefined。
    */
   pop(): T | undefined {
     const size: number = this.#data.length - 1;
@@ -320,13 +309,11 @@ export class BinaryHeap<T> implements Iterable<T> {
   }
 
   /**
-   * Add one or more values to the binary heap, returning the new length of the
-   * heap.
+   * 向二叉堆中添加一个或多个值，并返回堆的新长度。
    *
-   * The complexity of this operation is O(1) on average and O(log n) in the
-   * worst case, where n is the count of values stored in the binary heap.
+   * 该操作的时间复杂度在平均情况下为 O(1)，在最坏情况下为 O(log n)，其中 n 是二叉堆中存储值的数量。
    *
-   * @example Adding values to the binary heap
+   * @example 向二叉堆中添加值
    * ```ts
    * import { BinaryHeap } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -337,8 +324,8 @@ export class BinaryHeap<T> implements Iterable<T> {
    * assertEquals([...heap], [5, 4, 3, 2, 1]);
    * ```
    *
-   * @param values The values to add to the binary heap.
-   * @returns The new length of the binary heap.
+   * @param values 要添加到二叉堆中的值。
+   * @returns 二叉堆的新长度。
    */
   push(...values: T[]): number {
     for (const value of values) {
@@ -358,9 +345,9 @@ export class BinaryHeap<T> implements Iterable<T> {
   }
 
   /**
-   * Remove all values from the binary heap.
+   * 移除二叉堆中的所有值。
    *
-   * @example Clearing the binary heap
+   * @example 清空二叉堆
    * ```ts
    * import { BinaryHeap } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -376,9 +363,9 @@ export class BinaryHeap<T> implements Iterable<T> {
   }
 
   /**
-   * Check if the binary heap is empty.
+   * 检查二叉堆是否为空。
    *
-   * @example Checking if the binary heap is empty
+   * @example 检查二叉堆是否为空
    * ```ts
    * import { BinaryHeap } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -392,21 +379,18 @@ export class BinaryHeap<T> implements Iterable<T> {
    * assertEquals(heap.isEmpty(), false);
    * ```
    *
-   * @returns true if the binary heap is empty, otherwise false.
+   * @returns 如果二叉堆为空，则返回 true，否则返回 false。
    */
   isEmpty(): boolean {
     return this.#data.length === 0;
   }
 
   /**
-   * Create an iterator that retrieves values from the binary heap in order
-   * from greatest to least. The binary heap is drained in the process.
+   * 创建一个迭代器，按从大到小的顺序检索并移除二叉堆中的值。
    *
-   * To avoid draining the binary heap, create a copy using
-   * {@link BinaryHeap.from} and then call {@link BinaryHeap.prototype.drain}
-   * on the copy.
+   * 要避免消耗二叉堆，请使用 {@link BinaryHeap.from} 创建一个副本，然后在副本上调用 {@link BinaryHeap.prototype.drain}。
    *
-   * @example Draining the binary heap
+   * @example 排空二叉堆
    * ```ts
    * import { BinaryHeap } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -417,7 +401,7 @@ export class BinaryHeap<T> implements Iterable<T> {
    * assertEquals([...heap.drain()], []);
    * ```
    *
-   * @returns An iterator for retrieving and removing values from the binary heap.
+   * @returns 一个用于检索和移除二叉堆中值的迭代器。
    */
   *drain(): IterableIterator<T> {
     while (!this.isEmpty()) {
@@ -426,10 +410,9 @@ export class BinaryHeap<T> implements Iterable<T> {
   }
 
   /**
-   * Create an iterator that retrieves values from the binary heap in order
-   * from greatest to least. The binary heap is drained in the process.
+   * 创建一个迭代器，按从大到小的顺序检索并移除二叉堆中的值。
    *
-   * @example Getting an iterator for the binary heap
+   * @example 获取二叉堆的迭代器
    * ```ts
    * import { BinaryHeap } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -440,7 +423,7 @@ export class BinaryHeap<T> implements Iterable<T> {
    * assertEquals([...heap], []);
    * ```
    *
-   * @returns An iterator for retrieving and removing values from the binary heap.
+   * @returns 一个用于检索和移除二叉堆中值的迭代器。
    */
   *[Symbol.iterator](): IterableIterator<T> {
     yield* this.drain();

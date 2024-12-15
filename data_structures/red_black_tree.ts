@@ -17,16 +17,13 @@ const {
 } = internals;
 
 /**
- * A red-black tree. This is a kind of self-balancing binary search tree. The
- * values are in ascending order by default, using JavaScript's built-in
- * comparison operators to sort the values.
+ * 红黑树。这是一种自平衡的二叉搜索树。
+ * 默认情况下，值按升序排列，使用 JavaScript 内置的比较运算符对值进行排序。
  *
- * Red-Black Trees require fewer rotations than AVL Trees, so they can provide
- * faster insertions and removal operations. If you need faster lookups, you
- * should use an AVL Tree instead. AVL Trees are more strictly balanced than
- * Red-Black Trees, so they can provide faster lookups.
+ * 红黑树所需的旋转次数比 AVL 树少，因此可以提供更快的插入和删除操作。
+ * 如果需要更快的查找，应该使用 AVL 树。AVL 树比红黑树更严格地平衡，因此可以提供更快的查找。
  *
- * | Method        | Average Case | Worst Case |
+ * | 方法          | 平均情况    | 最坏情况   |
  * | ------------- | ------------ | ---------- |
  * | find(value)   | O(log n)     | O(log n)   |
  * | insert(value) | O(log n)     | O(log n)   |
@@ -34,7 +31,7 @@ const {
  * | min()         | O(log n)     | O(log n)   |
  * | max()         | O(log n)     | O(log n)   |
  *
- * @example Usage
+ * @example 用法示例
  * ```ts
  * import {
  *   ascend,
@@ -98,40 +95,37 @@ const {
  * ]);
  * ```
  *
- * @typeparam T The type of the values being stored in the tree.
+ * @typeparam T 存储在树中的值的类型。
  */
 export class RedBlackTree<T> extends BinarySearchTree<T> {
   /**
-   * Construct an empty red-black tree.
+   * 构造一个空的红黑树。
    *
-   * @param compare A custom comparison function for the values. The default comparison function sorts by ascending order.
+   * @param compare 值的自定义比较函数。默认的比较函数按升序排序。
    */
   constructor(compare: (a: T, b: T) => number = ascend) {
     if (typeof compare !== 'function') {
       throw new TypeError(
-        "Cannot construct a RedBlackTree: the 'compare' parameter is not a function, did you mean to call RedBlackTree.from?",
+        "无法构造 RedBlackTree：'compare' 参数不是函数，是否想调用 RedBlackTree.from？",
       );
     }
     super(compare);
   }
 
   /**
-   * Create a new red-black tree from an array like, an iterable object, or
-   * an existing red-black tree.
+   * 从类数组、可迭代对象或现有红黑树创建一个新的红黑树。
    *
-   * A custom comparison function can be provided to sort the values in a
-   * specific order. By default, the values are sorted in ascending order,
-   * unless a {@link RedBlackTree} is passed, in which case the comparison
-   * function is copied from the input tree.
+   * 可以提供自定义比较函数以特定顺序对值进行排序。默认情况下，值按升序排序，
+   * 除非传入的是 {@link RedBlackTree}，此时比较函数将从输入树中复制。
    *
-   * @example Creating a red-black tree from an array like
+   * @example 从类数组创建红黑树
    * ```ts no-assert
    * import { RedBlackTree } from "@std/data-structures";
    *
    * const tree = RedBlackTree.from<number>([3, 10, 13, 4, 6, 7, 1, 14]);
    * ```
    *
-   * @example Creating a red-black tree from an iterable object
+   * @example 从可迭代对象创建红黑树
    * ```ts no-assert
    * import { RedBlackTree } from "@std/data-structures";
    *
@@ -142,7 +136,7 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
    * })());
    * ```
    *
-   * @example Creating a red-black tree from an existing red-black tree
+   * @example 从现有红黑树创建红黑树
    * ```ts no-assert
    * import { RedBlackTree } from "@std/data-structures";
    *
@@ -150,7 +144,7 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
    * const copy = RedBlackTree.from(tree);
    * ```
    *
-   * @example Creating a red-black tree from an array like with a custom comparison function
+   * @example 使用自定义比较函数从类数组创建红黑树
    * ```ts no-assert
    * import { RedBlackTree, descend } from "@std/data-structures";
    *
@@ -159,10 +153,10 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
    * });
    * ```
    *
-   * @typeparam T The type of the values being stored in the tree.
-   * @param collection An array like, an iterable, or existing red-black tree.
-   * @param options An optional options object to customize the comparison function.
-   * @returns A new red-black tree with the values from the passed collection.
+   * @typeparam T 存储在树中的值的类型。
+   * @param collection 类数组、可迭代对象或现有红黑树。
+   * @param options 可选选项对象，用于自定义比较函数。
+   * @returns 一个包含传入集合值的新红黑树。
    */
   static override from<T>(
     collection: ArrayLike<T> | Iterable<T> | RedBlackTree<T>,
@@ -171,21 +165,14 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
     },
   ): RedBlackTree<T>;
   /**
-   * Create a new red-black tree from an array like, an iterable object, or
-   * an existing red-black tree.
+   * 从类数组、可迭代对象或现有红黑树创建一个新的红黑树。
    *
-   * A custom mapping function can be provided to transform the values before
-   * inserting them into the tree.
+   * 可以提供自定义映射函数在插入值之前转换它们。
    *
-   * A custom comparison function can be provided to sort the values in a
-   * specific order. A custom mapping function can be provided to transform the
-   * values before inserting them into the tree. By default, the values are
-   * sorted in ascending order, unless a {@link RedBlackTree} is passed, in
-   * which case the comparison function is copied from the input tree. The
-   * comparison operator is used to sort the values in the tree after mapping
-   * the values.
+   * 可以提供自定义比较函数以特定顺序对值进行排序。可以提供自定义映射函数在插入值之前转换它们。
+   * 默认情况下，值按升序排序，除非传入的是 {@link RedBlackTree}，此时比较函数将从输入树中复制。映射后的值使用比较运算符排序。
    *
-   * @example Creating a red-black tree from an array like with a custom mapping function
+   * @example 使用自定义映射函数从类数组创建红黑树
    * ```ts no-assert
    * import { RedBlackTree } from "@std/data-structures";
    *
@@ -194,12 +181,12 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
    * });
    * ```
 
-   * @typeparam T The type of the values in the passed collection.
-   * @typeparam U The type of the values being stored in the red-black tree.
-   * @typeparam V The type of the `this` context in the mapping function. Defaults to `undefined`.
-   * @param collection An array like, an iterable, or existing red-black tree.
-   * @param options The options object to customize the mapping and comparison functions. The `thisArg` property can be used to set the `this` value when calling the mapping function.
-   * @returns A new red-black tree with the mapped values from the passed collection.
+   * @typeparam T 传入集合中值的类型。
+   * @typeparam U 存储在红黑树中的值的类型。
+   * @typeparam V 映射函数中 `this` 上下文的类型。默认为 `undefined`。
+   * @param collection 类数组、可迭代对象或现有红黑树。
+   * @param options 选项对象，用于自定义映射和比较函数。`thisArg` 属性可用于在调用映射函数时设置 `this` 值。
+   * @returns 一个包含映射后值的新红黑树。
    */
   static override from<T, U, V = undefined>(
     collection: ArrayLike<T> | Iterable<T> | RedBlackTree<T>,
@@ -308,12 +295,12 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
   }
 
   /**
-   * Add a value to the red-black tree if it does not already exist in the tree.
+   * 如果值尚不存在于树中，则将其添加到红黑树中。
    *
-   * The complexity of this operation is on average and at worst O(log n), where
-   * n is the number of values in the tree.
+   * 该操作的复杂度平均和最坏情况均为 O(log n)，其中
+   * n 是树中的值的数量。
    *
-   * @example Inserting a value into the tree
+   * @example 向树中插入值
    * ```ts
    * import { RedBlackTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -324,8 +311,8 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
    * assertEquals(tree.insert(42), false);
    * ```
    *
-   * @param value The value to insert into the tree.
-   * @returns `true` if the value was inserted, `false` if the value already exists in the tree.
+   * @param value 要插入到树中的值。
+   * @returns 如果值被插入，返回 `true`；如果值已存在于树中，返回 `false`。
    */
   override insert(value: T): boolean {
     let node = insertNode(this, RedBlackNode, value) as RedBlackNode<T> | null;
@@ -360,12 +347,12 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
   }
 
   /**
-   * Remove a value from the red-black tree if it exists in the tree.
+   * 如果值存在于树中，则将其从红黑树中移除。
    *
-   * The complexity of this operation is on average and at worst O(log n), where
-   * n is the number of values in the tree.
+   * 该操作的复杂度平均和最坏情况均为 O(log n)，其中
+   * n 是树中的值的数量。
    *
-   * @example Removing values from the tree
+   * @example 从树中移除值
    * ```ts
    * import { RedBlackTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -376,8 +363,8 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
    * assertEquals(tree.remove(42), false);
    * ```
    *
-   * @param value The value to remove from the tree.
-   * @returns `true` if the value was found and removed, `false` if the value was not found in the tree.
+   * @param value 要从树中移除的值。
+   * @returns 如果找到并移除该值，返回 `true`；如果未找到该值，返回 `false`。
    */
   override remove(value: T): boolean {
     const node = findNode(this, value) as RedBlackNode<T> | null;

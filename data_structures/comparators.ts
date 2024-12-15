@@ -2,10 +2,9 @@
 // This module is browser compatible.
 
 /**
- * Compare two values in ascending order using JavaScript's built in comparison
- * operators.
+ * 使用 JavaScript 内置的比较运算符以升序比较两个值。
  *
- * @example Comparing numbers
+ * @example 比较数字
  * ```ts
  * import { ascend } from "@std/data-structures";
  * import { assertEquals } from "@std/assert";
@@ -15,20 +14,19 @@
  * assertEquals(ascend(1, 1), 0);
  * ```
  *
- * @typeparam T The type of the values being compared.
- * @param a The left comparison value.
- * @param b The right comparison value.
- * @returns -1 if `a` is less than `b`, 0 if `a` is equal to `b`, and 1 if `a` is greater than `b`.
+ * @typeparam T 被比较值的类型。
+ * @param a 左边的比较值。
+ * @param b 右边的比较值。
+ * @returns 如果 `a` 小于 `b` 返回 -1，如果 `a` 等于 `b` 返回 0，如果 `a` 大于 `b` 返回 1。
  */
 export function ascend<T>(a: T, b: T): -1 | 0 | 1 {
   return a < b ? -1 : a > b ? 1 : 0;
 }
 
 /**
- * Compare two values in descending order using JavaScript's built in comparison
- * operators.
+ * 使用 JavaScript 内置的比较运算符以降序比较两个值。
  *
- * @example Comparing numbers
+ * @example 比较数字
  * ```ts
  * import { descend } from "@std/data-structures";
  * import { assertEquals } from "@std/assert";
@@ -38,10 +36,10 @@ export function ascend<T>(a: T, b: T): -1 | 0 | 1 {
  * assertEquals(descend(1, 1), 0);
  * ```
  *
- * @typeparam T The type of the values being compared.
- * @param a The left comparison value.
- * @param b The right comparison value.
- * @returns -1 if `a` is greater than `b`, 0 if `a` is equal to `b`, and 1 if `a` is less than `b`.
+ * @typeparam T 被比较值的类型。
+ * @param a 左边的比较值。
+ * @param b 右边的比较值。
+ * @returns 如果 `a` 大于 `b` 返回 -1，如果 `a` 等于 `b` 返回 0，如果 `a` 小于 `b` 返回 1。
  */
 export function descend<T>(a: T, b: T): -1 | 0 | 1 {
   return a < b ? 1 : a > b ? -1 : 0;

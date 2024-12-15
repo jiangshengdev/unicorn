@@ -8,23 +8,23 @@ import { internals } from './_binary_search_tree_internals.ts';
 type Direction = 'left' | 'right';
 
 /**
- * An unbalanced binary search tree. The values are in ascending order by default,
- * using JavaScript's built-in comparison operators to sort the values.
+ * 一个未平衡的二叉搜索树。默认情况下，值按升序排列，
+ * 使用 JavaScript 内置的比较运算符对值进行排序。
  *
- * For performance, it's recommended that you use a self-balancing binary search
- * tree instead of this one unless you are extending this to create a
- * self-balancing tree. See {@link RedBlackTree} for an example of how BinarySearchTree
- * can be extended to create a self-balancing binary search tree.
+ * 为了性能，建议使用自平衡的二叉搜索树，
+ * 除非你正在扩展此树以创建自平衡树，
+ * 否则不要使用此树。请参见 {@link RedBlackTree} 了解如何
+ * 扩展 BinarySearchTree 创建自平衡二叉搜索树的示例。
  *
- * | Method        | Average Case | Worst Case |
- * | ------------- | ------------ | ---------- |
- * | find(value)   | O(log n)     | O(n)       |
- * | insert(value) | O(log n)     | O(n)       |
- * | remove(value) | O(log n)     | O(n)       |
- * | min()         | O(log n)     | O(n)       |
- * | max()         | O(log n)     | O(n)       |
+ * | 方法         | 平均情况 | 最坏情况 |
+ * | ------------ | -------- | -------- |
+ * | find(value)  | O(log n) | O(n)     |
+ * | insert(value)| O(log n) | O(n)     |
+ * | remove(value)| O(log n) | O(n)     |
+ * | min()        | O(log n) | O(n)     |
+ * | max()        | O(log n) | O(n)     |
  *
- * @example Usage
+ * @example 用法
  * ```ts
  * import {
  *   BinarySearchTree,
@@ -88,7 +88,7 @@ type Direction = 'left' | 'right';
  * ]);
  * ```
  *
- * @typeparam T The type of the values stored in the binary search tree.
+ * @typeparam T 存储在二叉搜索树中的值的类型。
  */
 export class BinarySearchTree<T> implements Iterable<T> {
   #root: BinarySearchNode<T> | null = null;
@@ -96,13 +96,12 @@ export class BinarySearchTree<T> implements Iterable<T> {
   #compare: (a: T, b: T) => number;
 
   /**
-   * Construct an empty binary search tree.
+   * 构造一个空的二叉搜索树。
    *
-   * To create a binary search tree from an array like, an iterable object, or an
-   * existing binary search tree, use the {@link BinarySearchTree.from} method.
+   * 要从数组类、可迭代对象或现有二叉搜索树创建二叉搜索树，请使用 {@link BinarySearchTree.from} 方法。
    *
-   * @param compare A custom comparison function to sort the values in the tree.
-   * By default, the values are sorted in ascending order.
+   * @param compare 一个自定义比较函数，用于对树中的值进行排序。
+   * 默认情况下，值按升序排序。
    */
   constructor(compare: (a: T, b: T) => number = ascend) {
     if (typeof compare !== 'function') {
@@ -143,22 +142,20 @@ export class BinarySearchTree<T> implements Iterable<T> {
   }
 
   /**
-   * Creates a new binary search tree from an array like, an iterable object,
-   * or an existing binary search tree.
+   * 从数组类、可迭代对象或现有二叉搜索树创建一个新的二叉搜索树。
    *
-   * A custom comparison function can be provided to sort the values in a
-   * specific order. By default, the values are sorted in ascending order,
-   * unless a {@link BinarySearchTree} is passed, in which case the comparison
-   * function is copied from the input tree.
+   * 可以提供自定义比较函数以按特定顺序对值进行排序。
+   * 默认情况下，值按升序排序，除非传递了 {@link BinarySearchTree}，
+   * 此时比较函数将从输入树中复制。
    *
-   * @example Creating a binary search tree from an array like
+   * @example 从数组类创建二叉搜索树
    * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    *
    * const tree = BinarySearchTree.from<number>([42, 43, 41]);
    * ```
    *
-   * @example Creating a binary search tree from an iterable object
+   * @example 从可迭代对象创建二叉搜索树
    * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    *
@@ -169,7 +166,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * })());
    * ```
    *
-   * @example Creating a binary search tree from an existing binary search tree
+   * @example 从现有二叉搜索树创建二叉搜索树
    * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    *
@@ -177,7 +174,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * const copy = BinarySearchTree.from(tree);
    * ```
    *
-   * @example Creating a binary search tree from an array like with a custom comparison function
+   * @example 使用自定义比较函数从数组类创建二叉搜索树
    * ```ts no-assert
    * import { BinarySearchTree, descend } from "@std/data-structures";
    *
@@ -187,10 +184,10 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * );
    * ```
    *
-   * @typeparam T The type of the values stored in the binary search tree.
-   * @param collection An array like, an iterable, or existing binary search tree.
-   * @param options An optional options object to customize the comparison function.
-   * @returns A new binary search tree created from the passed collection.
+   * @typeparam T 存储在二叉搜索树中的值的类型。
+   * @param collection 一个数组类、可迭代对象或现有二叉搜索树。
+   * @param options 一个可选的选项对象，用于自定义比较函数。
+   * @returns 一个从传递的集合创建的新二叉搜索树。
    */
   static from<T>(
     collection: ArrayLike<T> | Iterable<T> | BinarySearchTree<T>,
@@ -199,21 +196,15 @@ export class BinarySearchTree<T> implements Iterable<T> {
     },
   ): BinarySearchTree<T>;
   /**
-   * Create a new binary search tree from an array like, an iterable object, or
-   * an existing binary search tree.
+   * 从数组类、可迭代对象或现有二叉搜索树创建一个新的二叉搜索树。
    *
-   * A custom mapping function can be provided to transform the values before
-   * inserting them into the tree.
+   * 可以提供自定义映射函数，以在将值插入树之前转换它们。
    *
-   * A custom comparison function can be provided to sort the values in a
-   * specific order. A custom mapping function can be provided to transform the
-   * values before inserting them into the tree. By default, the values are
-   * sorted in ascending order, unless a {@link BinarySearchTree} is passed, in
-   * which case the comparison function is copied from the input tree. The
-   * comparison operator is used to sort the values in the tree after mapping
-   * the values.
+   * 可以提供自定义比较函数以按特定顺序对值进行排序。默认情况下，值按升序排序，
+   * 除非传递了 {@link BinarySearchTree}，此时比较函数将从输入树中复制。
+   * 比较运算符用于在映射值后对树中的值进行排序。
    *
-   * @example Creating a binary search tree from an array like with a custom mapping function
+   * @example 使用自定义映射函数从数组类创建二叉搜索树
    * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    *
@@ -223,12 +214,12 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * );
    * ```
    *
-   * @typeparam T The type of the values in the passed collection.
-   * @typeparam U The type of the values stored in the binary search tree.
-   * @typeparam V The type of the `this` value when calling the mapping function. Defaults to `undefined`.
-   * @param collection An array like, an iterable, or existing binary search tree.
-   * @param options The options object to customize the mapping and comparison functions. The `thisArg` property can be used to set the `this` value when calling the mapping function.
-   * @returns A new binary search tree containing the mapped values from the passed collection.
+   * @typeparam T 传递集合中值的类型。
+   * @typeparam U 二叉搜索树中存储的值的类型。
+   * @typeparam V 调用映射函数时的 `this` 值的类型。默认为 `undefined`。
+   * @param collection 一个数组类、可迭代对象或现有二叉搜索树。
+   * @param options 一个选项对象，用于自定义映射和比较函数。`thisArg` 属性可用于设置调用映射函数时的 `this` 值。
+   * @returns 一个包含从传递的集合中映射值的新二叉搜索树。
    */
   static from<T, U, V = undefined>(
     collection: ArrayLike<T> | Iterable<T> | BinarySearchTree<T>,
@@ -298,11 +289,11 @@ export class BinarySearchTree<T> implements Iterable<T> {
   }
 
   /**
-   * The count of values stored in the binary search tree.
+   * 二叉搜索树中存储的值的数量。
    *
-   * The complexity of this operation is O(1).
+   * 该操作的时间复杂度为 O(1)。
    *
-   * @example Getting the size of the tree
+   * @example 获取树的大小
    * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -312,7 +303,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals(tree.size, 3);
    * ```
    *
-   * @returns The count of values stored in the binary search tree.
+   * @returns 二叉搜索树中存储的值的数量。
    */
   get size(): number {
     return this.#size;
@@ -378,15 +369,15 @@ export class BinarySearchTree<T> implements Iterable<T> {
     return null;
   }
 
-  /** Removes the given node, and returns the node that was physically removed from the tree. */
+  /** 移除给定节点，并返回物理上从树中移除的节点。 */
   #removeNode(node: BinarySearchNode<T>): BinarySearchNode<T> | null {
     /**
-     * The node to physically remove from the tree.
-     * Guaranteed to have at most one child.
+     * 要从树中物理移除的节点。
+     * 保证最多只有一个子节点。
      */
     const flaggedNode: BinarySearchNode<T> | null =
       !node.left || !node.right ? node : node.findSuccessorNode()!;
-    /** Replaces the flagged node. */
+    /** 替换标记节点的节点。 */
     const replacementNode: BinarySearchNode<T> | null =
       flaggedNode.left ?? flaggedNode.right;
 
@@ -397,7 +388,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
       flaggedNode.parent[flaggedNode.directionFromParent()!] = replacementNode;
     }
     if (flaggedNode !== node) {
-      /** Swaps values, in case value of the removed node is still needed by consumer. */
+      /** 交换值，以防移除的节点的值仍然被消费者需要。 */
       const swapValue = node.value;
       node.value = flaggedNode.value;
       flaggedNode.value = swapValue;
@@ -408,13 +399,11 @@ export class BinarySearchTree<T> implements Iterable<T> {
   }
 
   /**
-   * Add a value to the binary search tree if it does not already exist in the
-   * tree.
+   * 如果值尚不存在于树中，则将其添加到二叉搜索树中。
    *
-   * The complexity of this operation is on average O(log n), where n is the
-   * number of values in the tree. In the worst case, the complexity is O(n).
+   * 该操作的复杂度平均为 O(log n)，其中 n 是树中值的数量。在最坏情况下，复杂度为 O(n)。
    *
-   * @example Inserting values into the tree
+   * @example 向树中插入值
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -425,20 +414,19 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals(tree.insert(42), false);
    * ```
    *
-   * @param value The value to insert into the binary search tree.
-   * @returns `true` if the value was inserted, `false` if the value already exists in the tree.
+   * @param value 要插入到二叉搜索树中的值。
+   * @returns 如果值被插入，则返回 `true`；如果值已存在于树中，则返回 `false`。
    */
   insert(value: T): boolean {
     return !!this.#insertNode(BinarySearchNode, value);
   }
 
   /**
-   * Remove a value from the binary search tree if it exists in the tree.
+   * 如果值存在于树中，则将其从二叉搜索树中移除。
    *
-   * The complexity of this operation is on average O(log n), where n is the
-   * number of values in the tree. In the worst case, the complexity is O(n).
+   * 该操作的复杂度平均为 O(log n)，其中 n 是树中值的数量。在最坏情况下，复杂度为 O(n)。
    *
-   * @example Removing values from the tree
+   * @example 从树中移除值
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -449,8 +437,8 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals(tree.remove(42), false);
    * ```
    *
-   * @param value The value to remove from the binary search tree.
-   * @returns `true` if the value was found and removed, `false` if the value was not found in the tree.
+   * @param value 要从二叉搜索树中移除的值。
+   * @returns 如果找到并移除该值，则返回 `true`；如果未在树中找到该值，则返回 `false`。
    */
   remove(value: T): boolean {
     const node: BinarySearchNode<T> | null = this.#findNode(value);
@@ -459,12 +447,11 @@ export class BinarySearchTree<T> implements Iterable<T> {
   }
 
   /**
-   * Check if a value exists in the binary search tree.
+   * 检查一个值是否存在于二叉搜索树中。
    *
-   * The complexity of this operation depends on the underlying structure of the
-   * tree. Refer to the documentation of the structure itself for more details.
+   * 该操作的复杂度取决于树的底层结构。有关更多详细信息，请参阅结构本身的文档。
    *
-   * @example Finding values in the tree
+   * @example 在树中查找值
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -475,21 +462,19 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals(tree.find(43), null);
    * ```
    *
-   * @param value The value to search for in the binary search tree.
-   * @returns The value if it was found, or null if not found.
+   * @param value 要在二叉搜索树中搜索的值。
+   * @returns 如果找到该值，则返回该值；否则返回 `null`。
    */
   find(value: T): T | null {
     return this.#findNode(value)?.value ?? null;
   }
 
   /**
-   * Retrieve the lowest (left most) value in the binary search tree, or null if
-   * the tree is empty.
+   * 获取二叉搜索树中最小（最左边）的值，或者如果树为空则返回 `null`。
    *
-   * The complexity of this operation depends on the underlying structure of the
-   * tree. Refer to the documentation of the structure itself for more details.
+   * 该操作的复杂度取决于树的底层结构。有关更多详细信息，请参阅结构本身的文档。
    *
-   * @example Finding the minimum value in the tree
+   * @example 查找树中的最小值
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -499,20 +484,18 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals(tree.min(), 41);
    * ```
    *
-   * @returns The minimum value in the binary search tree, or null if the tree is empty.
+   * @returns 二叉搜索树中的最小值，或者如果树为空则返回 `null`。
    */
   min(): T | null {
     return this.#root ? this.#root.findMinNode().value : null;
   }
 
   /**
-   * Retrieve the highest (right most) value in the binary search tree, or null
-   * if the tree is empty.
+   * 获取二叉搜索树中最大（最右边）的值，或者如果树为空则返回 `null`。
    *
-   * The complexity of this operation depends on the underlying structure of the
-   * tree. Refer to the documentation of the structure itself for more details.
+   * 该操作的复杂度取决于树的底层结构。有关更多详细信息，请参阅结构本身的文档。
    *
-   * @example Finding the maximum value in the tree
+   * @example 查找树中的最大值
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -522,18 +505,18 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals(tree.max(), 43);
    * ```
    *
-   * @returns The maximum value in the binary search tree, or null if the tree is empty.
+   * @returns 二叉搜索树中的最大值，或者如果树为空则返回 `null`。
    */
   max(): T | null {
     return this.#root ? this.#root.findMaxNode().value : null;
   }
 
   /**
-   * Remove all values from the binary search tree.
+   * 从二叉搜索树中移除所有值。
    *
-   * The complexity of this operation is O(1).
+   * 该操作的复杂度为 O(1)。
    *
-   * @example Clearing the tree
+   * @example 清空树
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -551,11 +534,11 @@ export class BinarySearchTree<T> implements Iterable<T> {
   }
 
   /**
-   * Check if the binary search tree is empty.
+   * 检查二叉搜索树是否为空。
    *
-   * The complexity of this operation is O(1).
+   * 该操作的复杂度为 O(1)。
    *
-   * @example Checking if the tree is empty
+   * @example 检查树是否为空
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -569,17 +552,16 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals(tree.isEmpty(), false);
    * ```
    *
-   * @returns `true` if the binary search tree is empty, `false` otherwise.
+   * @returns 如果二叉搜索树为空，则返回 `true`；否则返回 `false`。
    */
   isEmpty(): boolean {
     return this.size === 0;
   }
 
   /**
-   * Create an iterator over this tree that traverses the tree in-order (LNR,
-   * Left-Node-Right).
+   * 创建一个遍历此树的迭代器，按中序遍历（LNR，左-节点-右）。
    *
-   * @example Using the in-order LNR iterator
+   * @example 使用中序 LNR 迭代器
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -589,7 +571,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals([...tree.lnrValues()], [1, 2, 3, 4, 5]);
    * ```
    *
-   * @returns An iterator that traverses the tree in-order (LNR).
+   * @returns 一个按中序遍历（LNR）遍历树的迭代器。
    */
   *lnrValues(): IterableIterator<T> {
     const nodes: BinarySearchNode<T>[] = [];
@@ -607,10 +589,9 @@ export class BinarySearchTree<T> implements Iterable<T> {
   }
 
   /**
-   * Create an iterator over this tree that traverses the tree in reverse
-   * in-order (RNL, Right-Node-Left).
+   * 创建一个遍历此树的迭代器，按逆中序遍历（RNL，右-节点-左）。
    *
-   * @example Using the reverse in-order RNL iterator
+   * @example 使用逆中序 RNL 迭代器
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -619,7 +600,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * [...tree.rnlValues()] // 5, 4, 3, 2, 1
    * ```
    *
-   * @returns An iterator that traverses the tree in reverse in-order (RNL).
+   * @returns 一个按逆中序遍历（RNL）遍历树的迭代器。
    */
   *rnlValues(): IterableIterator<T> {
     const nodes: BinarySearchNode<T>[] = [];
@@ -637,10 +618,9 @@ export class BinarySearchTree<T> implements Iterable<T> {
   }
 
   /**
-   * Create an iterator over this tree that traverses the tree in pre-order (NLR,
-   * Node-Left-Right).
+   * 创建一个遍历此树的迭代器，按前序遍历（NLR，节点-左-右）。
    *
-   * @example Using the pre-order NLR iterator
+   * @example 使用前序 NLR 迭代器
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -650,7 +630,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals([...tree.nlrValues()], [4, 1, 2, 3, 5]);
    * ```
    *
-   * @returns An iterator that traverses the tree in pre-order (NLR).
+   * @returns 一个按前序遍历（NLR）遍历树的迭代器。
    */
   *nlrValues(): IterableIterator<T> {
     const nodes: BinarySearchNode<T>[] = [];
@@ -664,10 +644,9 @@ export class BinarySearchTree<T> implements Iterable<T> {
   }
 
   /**
-   * Create an iterator over this tree that traverses the tree in post-order (LRN,
-   * Left-Right-Node).
+   * 创建一个遍历此树的迭代器，按后序遍历（LRN，左-右-节点）。
    *
-   * @example Using the post-order LRN iterator
+   * @example 使用后序 LRN 迭代器
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -677,7 +656,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals([...tree.lrnValues()], [3, 2, 1, 5, 4]);
    * ```
    *
-   * @returns An iterator that traverses the tree in post-order (LRN).
+   * @returns 一个按后序遍历（LRN）遍历树的迭代器。
    */
   *lrnValues(): IterableIterator<T> {
     const nodes: BinarySearchNode<T>[] = [];
@@ -700,10 +679,9 @@ export class BinarySearchTree<T> implements Iterable<T> {
   }
 
   /**
-   * Create an iterator over this tree that traverses the tree in level-order (BFS,
-   * Breadth-First Search).
+   * 创建一个遍历此树的迭代器，按层序遍历（BFS，宽度优先搜索）。
    *
-   * @example Using the level-order BFS iterator
+   * @example 使用层序 BFS 迭代器
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -713,7 +691,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals([...tree.lvlValues()], [4, 1, 5, 2, 3]);
    * ```
    *
-   * @returns An iterator that traverses the tree in level-order (BFS).
+   * @returns 一个按层序遍历（BFS）遍历树的迭代器。
    */
   *lvlValues(): IterableIterator<T> {
     const children: BinarySearchNode<T>[] = [];
@@ -727,10 +705,9 @@ export class BinarySearchTree<T> implements Iterable<T> {
   }
 
   /**
-   * Create an iterator over this tree that traverses the tree in-order (LNR,
-   * Left-Node-Right).
+   * 创建一个遍历此树的迭代器，按中序遍历（LNR，左-节点-右）。
    *
-   * @example Using the in-order iterator
+   * @example 使用中序迭代器
    * ```ts
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
@@ -740,9 +717,9 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals([...tree], [1, 2, 3, 4, 5]);
    * ```
    *
-   * See {@link BinarySearchTree.prototype.lnrValues}.
+   * 参见 {@link BinarySearchTree.prototype.lnrValues}。
    *
-   * @returns An iterator that traverses the tree in-order (LNR).
+   * @returns 一个按中序遍历（LNR）遍历树的迭代器。
    */
   *[Symbol.iterator](): IterableIterator<T> {
     yield* this.lnrValues();
