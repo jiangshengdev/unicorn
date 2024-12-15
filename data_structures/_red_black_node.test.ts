@@ -1,3 +1,4 @@
+// Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 import assert from 'node:assert/strict';
 import { RedBlackNode } from './_red_black_node.ts';
 

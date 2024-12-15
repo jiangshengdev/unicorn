@@ -1,3 +1,4 @@
+// Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 import assert from 'node:assert/strict';
 import { RedBlackTree } from './red_black_tree.ts';
 import { ascend, descend } from './comparators.ts';
