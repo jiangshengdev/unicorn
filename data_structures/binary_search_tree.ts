@@ -247,7 +247,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
       // 从现有树复制比较函数，除非提供了新的比较函数
       result = new BinarySearchTree(
         options?.compare ??
-        (collection as unknown as BinarySearchTree<U>).#compare,
+          (collection as unknown as BinarySearchTree<U>).#compare,
       );
 
       if (options?.compare || options?.map) {
