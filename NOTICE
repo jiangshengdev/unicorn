@@ -1,0 +1,4 @@
+This project incorporates third-party software licensed under the MIT License:
+
+- [std](https://github.com/denoland/std)
+  Copyright 2018-2022 the Deno authors.
