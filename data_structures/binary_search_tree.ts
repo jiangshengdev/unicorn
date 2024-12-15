@@ -241,24 +241,29 @@ export class BinarySearchTree<T> implements Iterable<T> {
     // 创建新的二叉搜索树实例
     let result: BinarySearchTree<U>;
     let unmappedValues: ArrayLike<T> | Iterable<T> = [];
+
     if (collection instanceof BinarySearchTree) {
-      // 从现有树复制比较函数
+      // 如果传入的是现有的二叉搜索树
+      // 从现有树复制比较函数，除非提供了新的比较函数
       result = new BinarySearchTree(
         options?.compare ??
-          (collection as unknown as BinarySearchTree<U>).#compare,
+        (collection as unknown as BinarySearchTree<U>).#compare,
       );
+
       if (options?.compare || options?.map) {
-        // 如果提供了自定义比较函数或映射函数，使用原始集合
+        // 如果提供了自定义比较函数或映射函数，使用原始集合进行后续处理
         unmappedValues = collection;
       } else {
-        // 复制现有树的节点结构
+        // 如果没有提供新的比较函数或映射函数，直接复制现有树的节点结构
         const nodes: BinarySearchNode<U>[] = [];
         if (collection.#root) {
+          // 复制根节点
           result.#root = BinarySearchNode.from(
             collection.#root as unknown as BinarySearchNode<U>,
           );
           nodes.push(result.#root);
         }
+        // 遍历所有节点并复制左右子节点
         while (nodes.length) {
           const node: BinarySearchNode<U> = nodes.pop()!;
           const left: BinarySearchNode<U> | null = node.left
@@ -269,17 +274,20 @@ export class BinarySearchTree<T> implements Iterable<T> {
             : null;
 
           if (left) {
+            // 如果存在左子节点，设置其父节点并加入待处理队列
             left.parent = node;
             nodes.push(left);
           }
           if (right) {
+            // 如果存在右子节点，设置其父节点并加入待处理队列
             right.parent = node;
             nodes.push(right);
           }
         }
       }
     } else {
-      // 使用自定义比较函数或默认比较函数创建新树
+      // 如果传入的是数组类或可迭代对象
+      // 使用提供的比较函数或默认比较函数创建新的二叉搜索树
       result = (
         options?.compare
           ? new BinarySearchTree(options.compare)
@@ -287,11 +295,13 @@ export class BinarySearchTree<T> implements Iterable<T> {
       ) as BinarySearchTree<U>;
       unmappedValues = collection;
     }
-    // 如果提供了映射函数，则映射值
+
+    // 如果提供了映射函数，则应用映射函数转换所有值
     const values: Iterable<U> = options?.map
       ? Array.from(unmappedValues, options.map, options.thisArg)
       : (unmappedValues as U[]);
-    // 插入所有值到新树中
+
+    // 将所有转换后的值插入新树中
     for (const value of values) result.insert(value);
     return result;
   }
@@ -317,17 +327,22 @@ export class BinarySearchTree<T> implements Iterable<T> {
     return this.#size;
   }
 
-  // 查找给定值对应的节点
+  /**
+   * 查找给定值对应的节点。
+   *
+   * @param value 要查找的值。
+   * @returns 如果找到，返回对应的节点；否则返回 null。
+   */
   #findNode(value: T): BinarySearchNode<T> | null {
     // 从根节点开始查找
     let node: BinarySearchNode<T> | null = this.#root;
 
-    // 当节点不为空时，继续遍历
+    // 持续遍历直到找到目标值或到达叶子节点
     while (node) {
-      // 比较目标值与当前节点的值
+      // 使用比较函数比较目标值与当前节点的值
       const order: number = this.#compare(value as T, node.value);
 
-      // 如果找到目标值，结束循环
+      // 如果比较结果为0，表示找到了目标值
       if (order === 0) break;
 
       // 确定下一步搜索的方向
@@ -341,35 +356,42 @@ export class BinarySearchTree<T> implements Iterable<T> {
     return node;
   }
 
-  // 旋转节点，使子节点成为新的父节点
+  /**
+   * 旋转指定的节点，以重新平衡树结构。
+   *
+   * @param node 要旋转的节点。
+   * @param direction 旋转的方向，'left' 或 'right'。
+   * @throws 如果没有对应方向的子节点，则抛出错误。
+   */
   #rotateNode(node: BinarySearchNode<T>, direction: Direction) {
-    // 确定旋转方向的反方向
+    // 确定旋转方向的相反方向
     const replacementDirection: Direction =
       direction === 'left' ? 'right' : 'left';
 
-    // 如果没有子节点，无法旋转
+    // 检查是否存在替代子节点
     if (!node[replacementDirection]) {
       throw new TypeError(
         `Cannot rotate ${direction} without ${replacementDirection} child`,
       );
     }
 
-    // 获取替代的子节点
+    // 获取要替代的子节点
     const replacement: BinarySearchNode<T> = node[replacementDirection]!;
 
-    // 更新当前节点的子节点
+    // 将当前节点的替代方向子节点指向替代节点的相反方向子节点
     node[replacementDirection] = replacement[direction] ?? null;
     if (replacement[direction]) replacement[direction]!.parent = node;
 
-    // 更新替代节点的父节点
+    // 将替代节点的父节点设置为当前节点的父节点
     replacement.parent = node.parent;
     if (node.parent) {
-      // 更新父节点的子节点引用
+      // 确定替代节点在父节点中的方向
       const parentDirection: Direction =
         node === node.parent[direction] ? direction : replacementDirection;
+      // 更新父节点对子节点的引用
       node.parent[parentDirection] = replacement;
     } else {
-      // 如果没有父节点，更新根节点
+      // 如果当前节点是根节点，更新树的根节点为替代节点
       this.#root = replacement;
     }
 
@@ -378,7 +400,13 @@ export class BinarySearchTree<T> implements Iterable<T> {
     node.parent = replacement;
   }
 
-  // 插入新节点到树中
+  /**
+   * 插入一个新的节点到二叉搜索树中。
+   *
+   * @param Node 节点的构造函数。
+   * @param value 要插入的值。
+   * @returns 如果成功插入，返回新节点；如果值已存在，返回 null。
+   */
   #insertNode(
     Node: typeof BinarySearchNode,
     value: T,
@@ -389,24 +417,24 @@ export class BinarySearchTree<T> implements Iterable<T> {
       this.#size++;
       return this.#root;
     } else {
-      // 从根节点开始遍历
+      // 从根节点开始遍历树
       let node: BinarySearchNode<T> = this.#root;
 
       while (true) {
-        // 比较新值与当前节点的值
+        // 使用比较函数比较新值与当前节点的值
         const order: number = this.#compare(value, node.value);
 
-        // 如果值相等，结束循环
+        // 如果值相等，表示值已存在于树中，结束插入
         if (order === 0) break;
 
-        // 确定要移动的方向
+        // 确定插入方向
         const direction: Direction = order < 0 ? 'left' : 'right';
 
-        // 如果子节点存在，继续遍历
+        // 如果子节点存在，继续向下遍历
         if (node[direction]) {
           node = node[direction]!;
         } else {
-          // 如果子节点不存在，插入新节点
+          // 如果子节点不存在，在该位置插入新节点
           node[direction] = new Node(node, value);
           this.#size++;
           return node[direction];
@@ -418,13 +446,18 @@ export class BinarySearchTree<T> implements Iterable<T> {
     return null;
   }
 
-  // 移除指定的节点
+  /**
+   * 移除指定的节点。
+   *
+   * @param node 要移除的节点。
+   * @returns 被移除的节点，或者 null。
+   */
   #removeNode(node: BinarySearchNode<T>): BinarySearchNode<T> | null {
-    // 确定要删除的节点
+    // 确定要删除的节点，如果有两个子节点，则找到后继节点
     const flaggedNode: BinarySearchNode<T> | null =
       !node.left || !node.right ? node : node.findSuccessorNode()!;
 
-    // 获取替代节点（子节点或 null）
+    // 获取替代节点（左子节点或右子节点）
     const replacementNode: BinarySearchNode<T> | null =
       flaggedNode.left ?? flaggedNode.right;
 
@@ -435,7 +468,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
       // 如果删除的是根节点，更新根节点
       this.#root = replacementNode;
     } else {
-      // 更新父节点的子节点引用
+      // 确定替代节点在父节点中的方向
       flaggedNode.parent[flaggedNode.directionFromParent()!] = replacementNode;
     }
 
@@ -457,7 +490,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 该操作的复杂度平均为 O(log n)，其中 n 是树中值的数量。在最坏情况下，复杂度为 O(n)。
    *
    * @example 向树中插入值
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -468,7 +501,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * ```
    *
    * @param value 要插入到二叉搜索树中的值。
-   * @returns 如果值被插入，则返回 `true`；如果值已存在于树中，则返回 `false`。
+   * @returns 如果值**入，则返回 `true`；如果值已存在于树中，则返回 `false`。
    */
   insert(value: T): boolean {
     // 调用内部方法插入节点
@@ -481,7 +514,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 该操作的复杂度平均为 O(log n)，其中 n 是树中值的数量。在最坏情况下，复杂度为 O(n)。
    *
    * @example 从树中移除值
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -511,7 +544,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 该操作的复杂度取决于树的底层结构。有关更多详细信息，请参阅结构本身的文档。
    *
    * @example 在树中查找值
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -534,7 +567,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 该操作的复杂度取决于树的底层结构。有关更多详细信息，请参阅结构本身的文档。
    *
    * @example 查找树中的最小值
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -556,7 +589,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 该操作的复杂度取决于树的底层结构。有关更多详细信息，请参阅结构本身的文档。
    *
    * @example 查找树中的最大值
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -578,7 +611,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 该操作的复杂度为 O(1)。
    *
    * @example 清空树
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -590,10 +623,10 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * ```
    */
   clear() {
-    // 设置根节点为 null
+    // 将根节点设置为 null，断开所有节点的引用
     this.#root = null;
 
-    // 重置大小为 0
+    // 重置树的大小为 0
     this.#size = 0;
   }
 
@@ -603,7 +636,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 该操作的复杂度为 O(1)。
    *
    * @example 检查树是否为空
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -619,7 +652,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * @returns 如果二叉搜索树为空，则返回 `true`；否则返回 `false`。
    */
   isEmpty(): boolean {
-    // 返回大小是否为 0
+    // 检查树的大小是否为 0
     return this.size === 0;
   }
 
@@ -627,7 +660,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 创建一个遍历此树的迭代器，按中序遍历（LNR，左-节点-右）。
    *
    * @example 使用中序 LNR 迭代器
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -639,24 +672,24 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * @returns 一个按中序遍历（LNR）遍历树的迭代器。
    */
   *lnrValues(): IterableIterator<T> {
-    // 创建栈存储节点
+    // 创建栈来存储遍历路径上的节点
     const nodes: BinarySearchNode<T>[] = [];
 
-    // 从根节点开始
+    // 从根节点开始遍历
     let node: BinarySearchNode<T> | null = this.#root;
 
-    // 当栈不为空或节点存在时循环
+    // 持续遍历，直到栈为空且节点为 null
     while (nodes.length || node) {
       if (node) {
-        // 将左子节点压入栈
+        // 将当前节点压入栈，并移动到左子节点
         nodes.push(node);
         node = node.left;
       } else {
-        // 弹出节点并访问其值
+        // 如果没有左子节点，弹出栈顶节点并访问其值
         node = nodes.pop()!;
         yield node.value;
 
-        // 移动到右子节点
+        // 移动到右子节点继续遍历
         node = node.right;
       }
     }
@@ -666,7 +699,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 创建一个遍历此树的迭代器，按逆中序遍历（RNL，右-节点-左）。
    *
    * @example 使用逆中序 RNL 迭代器
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -677,15 +710,24 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * @returns 一个按逆中序遍历（RNL）遍历树的迭代器。
    */
   *rnlValues(): IterableIterator<T> {
+    // 创建栈来存储遍历路径上的节点
     const nodes: BinarySearchNode<T>[] = [];
+
+    // 从根节点开始遍历
     let node: BinarySearchNode<T> | null = this.#root;
+
+    // 持续遍历，直到栈为空且节点为 null
     while (nodes.length || node) {
       if (node) {
+        // 将当前节点压入栈，并移动到右子节点
         nodes.push(node);
         node = node.right;
       } else {
+        // 如果没有右子节点，弹出栈顶节点并访问其值
         node = nodes.pop()!;
         yield node.value;
+
+        // 移动到左子节点继续遍历
         node = node.left;
       }
     }
@@ -695,7 +737,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 创建一个遍历此树的迭代器，按前序遍历（NLR，节点-左-右）。
    *
    * @example 使用前序 NLR 迭代器
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -707,11 +749,19 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * @returns 一个按前序遍历（NLR）遍历树的迭代器。
    */
   *nlrValues(): IterableIterator<T> {
+    // 创建栈来存储待访问的节点
     const nodes: BinarySearchNode<T>[] = [];
+
+    // 如果根节点存在，先将其压入栈
     if (this.#root) nodes.push(this.#root);
+
+    // 持续遍历，直到栈为空
     while (nodes.length) {
+      // 弹出栈顶节点并访问其值
       const node: BinarySearchNode<T> = nodes.pop()!;
       yield node.value;
+
+      // 先压入右子节点，再压入左子节点，以确保左子节点先被访问
       if (node.right) nodes.push(node.right);
       if (node.left) nodes.push(node.left);
     }
@@ -721,7 +771,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 创建一个遍历此树的迭代器，按后序遍历（LRN，左-右-节点）。
    *
    * @example 使用后序 LRN 迭代器
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -733,18 +783,30 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * @returns 一个按后序遍历（LRN）遍历树的迭代器。
    */
   *lrnValues(): IterableIterator<T> {
+    // 创建栈来存储遍历路径上的节点
     const nodes: BinarySearchNode<T>[] = [];
+
+    // 当前正在访问的节点
     let node: BinarySearchNode<T> | null = this.#root;
+
+    // 记录上一个被访问的节点
     let lastNodeVisited: BinarySearchNode<T> | null = null;
+
+    // 持续遍历，直到栈为空且节点为 null
     while (nodes.length || node) {
       if (node) {
+        // 将当前节点压入栈，并移动到左子节点
         nodes.push(node);
         node = node.left;
       } else {
+        // 获取栈顶节点但不弹出
         const lastNode: BinarySearchNode<T> = nodes.at(-1)!;
+
+        // 如果存在右子节点且未被访问过，移动到右子节点
         if (lastNode.right && lastNode.right !== lastNodeVisited) {
           node = lastNode.right;
         } else {
+          // 否则，弹出栈顶节点并访问其值
           yield lastNode.value;
           lastNodeVisited = nodes.pop()!;
         }
@@ -756,7 +818,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 创建一个遍历此树的迭代器，按层序遍历（BFS，宽度优先搜索）。
    *
    * @example 使用层序 BFS 迭代器
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
@@ -768,12 +830,24 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * @returns 一个按层序遍历（BFS）遍历树的迭代器。
    */
   *lvlValues(): IterableIterator<T> {
+    // 创建一个队列来存储待访问的子节点
     const children: BinarySearchNode<T>[] = [];
+
+    // 当前正在访问的节点，从根节点开始
     let cursor: BinarySearchNode<T> | null = this.#root;
+
+    // 持续遍历，直到队列为空且节点为 null
     while (cursor) {
+      // 访问当前节点的值
       yield cursor.value;
+
+      // 将左子节点加入队列
       if (cursor.left) children.push(cursor.left);
+
+      // 将右子节点加入队列
       if (cursor.right) children.push(cursor.right);
+
+      // 从队列中取出下一个要访问的节点
       cursor = children.shift() ?? null;
     }
   }
@@ -782,7 +856,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 创建一个遍历此树的迭代器，按中序遍历（LNR，左-节点-右）。
    *
    * @example 使用中序迭代器
-   * ```ts
+   * ```ts no-assert
    * import { BinarySearchTree } from "@std/data-structures";
    * import { assertEquals } from "@std/assert";
    *
