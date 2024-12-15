@@ -1,7 +1,7 @@
 // Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { descend } from "./comparators.ts";
+import { descend } from './comparators.ts';
 
 /** Swaps the values at two indexes in an array. */
 function swap<T>(array: T[], a: number, b: number) {
@@ -69,7 +69,7 @@ export class BinaryHeap<T> implements Iterable<T> {
    * @param compare A custom comparison function to sort the values in the heap. By default, the values are sorted in descending order.
    */
   constructor(compare: (a: T, b: T) => number = descend) {
-    if (typeof compare !== "function") {
+    if (typeof compare !== 'function') {
       throw new TypeError(
         "Cannot construct a BinaryHeap: the 'compare' parameter is not a function, did you mean to call BinaryHeap.from?",
       );
@@ -207,7 +207,7 @@ export class BinaryHeap<T> implements Iterable<T> {
     }
     const values: Iterable<U> = options?.map
       ? Array.from(unmappedValues, options.map, options.thisArg)
-      : unmappedValues as U[];
+      : (unmappedValues as U[]);
     result.push(...values);
     return result;
   }
@@ -302,10 +302,11 @@ export class BinaryHeap<T> implements Iterable<T> {
     let right: number = 2 * (parent + 1);
     let left: number = right - 1;
     while (left < size) {
-      const greatestChild = right === size ||
-          this.#compare(this.#data[left]!, this.#data[right]!) <= 0
-        ? left
-        : right;
+      const greatestChild =
+        right === size ||
+        this.#compare(this.#data[left]!, this.#data[right]!) <= 0
+          ? left
+          : right;
       if (this.#compare(this.#data[greatestChild]!, this.#data[parent]!) < 0) {
         swap(this.#data, parent, greatestChild);
         parent = greatestChild;

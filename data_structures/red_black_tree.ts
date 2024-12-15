@@ -1,10 +1,10 @@
 // Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { ascend } from "./comparators.ts";
-import { BinarySearchTree } from "./binary_search_tree.ts";
-import { type Direction, RedBlackNode } from "./_red_black_node.ts";
-import { internals } from "./_binary_search_tree_internals.ts";
+import { ascend } from './comparators.ts';
+import { BinarySearchTree } from './binary_search_tree.ts';
+import { type Direction, RedBlackNode } from './_red_black_node.ts';
+import { internals } from './_binary_search_tree_internals.ts';
 
 const {
   getRoot,
@@ -107,7 +107,7 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
    * @param compare A custom comparison function for the values. The default comparison function sorts by ascending order.
    */
   constructor(compare: (a: T, b: T) => number = ascend) {
-    if (typeof compare !== "function") {
+    if (typeof compare !== 'function') {
       throw new TypeError(
         "Cannot construct a RedBlackTree: the 'compare' parameter is not a function, did you mean to call RedBlackTree.from?",
       );
@@ -253,14 +253,16 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
         }
       }
     } else {
-      result = (options?.compare
-        ? new RedBlackTree(options.compare)
-        : new RedBlackTree()) as RedBlackTree<U>;
+      result = (
+        options?.compare
+          ? new RedBlackTree(options.compare)
+          : new RedBlackTree()
+      ) as RedBlackTree<U>;
       unmappedValues = collection;
     }
     const values: Iterable<U> = options?.map
       ? Array.from(unmappedValues, options.map, options.thisArg)
-      : unmappedValues as U[];
+      : (unmappedValues as U[]);
     for (const value of values) result.insert(value);
     return result;
   }
@@ -270,10 +272,9 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
     current: RedBlackNode<T> | null,
   ) {
     while (parent && !current?.red) {
-      const direction: Direction = parent.left === current ? "left" : "right";
-      const siblingDirection: Direction = direction === "right"
-        ? "left"
-        : "right";
+      const direction: Direction = parent.left === current ? 'left' : 'right';
+      const siblingDirection: Direction =
+        direction === 'right' ? 'left' : 'right';
       let sibling: RedBlackNode<T> | null = parent[siblingDirection];
 
       if (sibling?.red) {
@@ -327,20 +328,15 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
    * @returns `true` if the value was inserted, `false` if the value already exists in the tree.
    */
   override insert(value: T): boolean {
-    let node = insertNode(
-      this,
-      RedBlackNode,
-      value,
-    ) as (RedBlackNode<T> | null);
+    let node = insertNode(this, RedBlackNode, value) as RedBlackNode<T> | null;
     if (node) {
       while (node.parent?.red) {
         let parent: RedBlackNode<T> = node.parent!;
         const parentDirection: Direction = parent.directionFromParent()!;
-        const uncleDirection: Direction = parentDirection === "right"
-          ? "left"
-          : "right";
-        const uncle: RedBlackNode<T> | null = parent.parent![uncleDirection] ??
-          null;
+        const uncleDirection: Direction =
+          parentDirection === 'right' ? 'left' : 'right';
+        const uncle: RedBlackNode<T> | null =
+          parent.parent![uncleDirection] ?? null;
 
         if (uncle?.red) {
           parent.red = false;
@@ -384,16 +380,13 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
    * @returns `true` if the value was found and removed, `false` if the value was not found in the tree.
    */
   override remove(value: T): boolean {
-    const node = findNode(this, value) as (RedBlackNode<T> | null);
+    const node = findNode(this, value) as RedBlackNode<T> | null;
 
     if (!node) {
       return false;
     }
 
-    const removedNode = removeNode(this, node) as (
-      | RedBlackNode<T>
-      | null
-    );
+    const removedNode = removeNode(this, node) as RedBlackNode<T> | null;
 
     if (removedNode && !removedNode.red) {
       this.#removeFixup(

@@ -1,11 +1,11 @@
 // Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { ascend } from "./comparators.ts";
-import { BinarySearchNode } from "./_binary_search_node.ts";
-import { internals } from "./_binary_search_tree_internals.ts";
+import { ascend } from './comparators.ts';
+import { BinarySearchNode } from './_binary_search_node.ts';
+import { internals } from './_binary_search_tree_internals.ts';
 
-type Direction = "left" | "right";
+type Direction = 'left' | 'right';
 
 /**
  * An unbalanced binary search tree. The values are in ascending order by default,
@@ -105,7 +105,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * By default, the values are sorted in ascending order.
    */
   constructor(compare: (a: T, b: T) => number = ascend) {
-    if (typeof compare !== "function") {
+    if (typeof compare !== 'function') {
       throw new TypeError(
         "Cannot construct a BinarySearchTree: the 'compare' parameter is not a function, did you mean to call BinarySearchTree.from?",
       );
@@ -283,14 +283,16 @@ export class BinarySearchTree<T> implements Iterable<T> {
         }
       }
     } else {
-      result = (options?.compare
-        ? new BinarySearchTree(options.compare)
-        : new BinarySearchTree()) as BinarySearchTree<U>;
+      result = (
+        options?.compare
+          ? new BinarySearchTree(options.compare)
+          : new BinarySearchTree()
+      ) as BinarySearchTree<U>;
       unmappedValues = collection;
     }
     const values: Iterable<U> = options?.map
       ? Array.from(unmappedValues, options.map, options.thisArg)
-      : unmappedValues as U[];
+      : (unmappedValues as U[]);
     for (const value of values) result.insert(value);
     return result;
   }
@@ -321,16 +323,15 @@ export class BinarySearchTree<T> implements Iterable<T> {
     while (node) {
       const order: number = this.#compare(value as T, node.value);
       if (order === 0) break;
-      const direction: "left" | "right" = order < 0 ? "left" : "right";
+      const direction: 'left' | 'right' = order < 0 ? 'left' : 'right';
       node = node[direction];
     }
     return node;
   }
 
   #rotateNode(node: BinarySearchNode<T>, direction: Direction) {
-    const replacementDirection: Direction = direction === "left"
-      ? "right"
-      : "left";
+    const replacementDirection: Direction =
+      direction === 'left' ? 'right' : 'left';
     if (!node[replacementDirection]) {
       throw new TypeError(
         `Cannot rotate ${direction} without ${replacementDirection} child`,
@@ -341,9 +342,8 @@ export class BinarySearchTree<T> implements Iterable<T> {
     if (replacement[direction]) replacement[direction]!.parent = node;
     replacement.parent = node.parent;
     if (node.parent) {
-      const parentDirection: Direction = node === node.parent[direction]
-        ? direction
-        : replacementDirection;
+      const parentDirection: Direction =
+        node === node.parent[direction] ? direction : replacementDirection;
       node.parent[parentDirection] = replacement;
     } else {
       this.#root = replacement;
@@ -365,7 +365,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
       while (true) {
         const order: number = this.#compare(value, node.value);
         if (order === 0) break;
-        const direction: Direction = order < 0 ? "left" : "right";
+        const direction: Direction = order < 0 ? 'left' : 'right';
         if (node[direction]) {
           node = node[direction]!;
         } else {
@@ -379,19 +379,16 @@ export class BinarySearchTree<T> implements Iterable<T> {
   }
 
   /** Removes the given node, and returns the node that was physically removed from the tree. */
-  #removeNode(
-    node: BinarySearchNode<T>,
-  ): BinarySearchNode<T> | null {
+  #removeNode(node: BinarySearchNode<T>): BinarySearchNode<T> | null {
     /**
      * The node to physically remove from the tree.
      * Guaranteed to have at most one child.
      */
-    const flaggedNode: BinarySearchNode<T> | null = !node.left || !node.right
-      ? node
-      : node.findSuccessorNode()!;
+    const flaggedNode: BinarySearchNode<T> | null =
+      !node.left || !node.right ? node : node.findSuccessorNode()!;
     /** Replaces the flagged node. */
-    const replacementNode: BinarySearchNode<T> | null = flaggedNode.left ??
-      flaggedNode.right;
+    const replacementNode: BinarySearchNode<T> | null =
+      flaggedNode.left ?? flaggedNode.right;
 
     if (replacementNode) replacementNode.parent = flaggedNode.parent;
     if (!flaggedNode.parent) {
