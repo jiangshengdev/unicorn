@@ -1,23 +1,21 @@
 import assert from 'node:assert/strict';
-import { RedBlackTree } from "./red_black_tree.ts";
-import { ascend, descend } from "./comparators.ts";
-import { type Container, MyMath } from "./_test_utils.ts";
+import { RedBlackTree } from './red_black_tree.ts';
+import { ascend, descend } from './comparators.ts';
+import { type Container, MyMath } from './_test_utils.ts';
 
-test("RedBlackTree throws if compare is not a function", () => {
+test('RedBlackTree throws if compare is not a function', () => {
   assert.throws(
     () => new RedBlackTree({} as (a: number, b: number) => number),
     {
       name: 'TypeError',
-      message: "Cannot construct a RedBlackTree: the 'compare' parameter is not a function, did you mean to call RedBlackTree.from?",
-    }
+      message:
+        "Cannot construct a RedBlackTree: the 'compare' parameter is not a function, did you mean to call RedBlackTree.from?",
+    },
   );
 });
 
-test("RedBlackTree works as expected with default ascend comparator", () => {
-  const trees = [
-    new RedBlackTree(),
-    new RedBlackTree(),
-  ] as const;
+test('RedBlackTree works as expected with default ascend comparator', () => {
+  const trees = [new RedBlackTree(), new RedBlackTree()] as const;
   const values: number[] = [-10, 9, -1, 100, 1, 0, -100, 10, -9];
 
   const expectedMin: number[][] = [
@@ -58,10 +56,7 @@ test("RedBlackTree works as expected with default ascend comparator", () => {
     assert.deepStrictEqual(tree.size, values.length);
     assert.deepStrictEqual(tree.isEmpty(), false);
 
-    assert.deepStrictEqual(
-      [...tree],
-      [-100, -10, -9, -1, 0, 1, 9, 10, 100],
-    );
+    assert.deepStrictEqual([...tree], [-100, -10, -9, -1, 0, 1, 9, 10, 100]);
     assert.deepStrictEqual(tree.size, values.length);
     assert.deepStrictEqual(tree.isEmpty(), false);
 
@@ -133,11 +128,8 @@ test("RedBlackTree works as expected with default ascend comparator", () => {
   }
 });
 
-test("RedBlackTree works as exepcted with descend comparator", () => {
-  const trees = [
-    new RedBlackTree(descend),
-    new RedBlackTree(descend),
-  ] as const;
+test('RedBlackTree works as exepcted with descend comparator', () => {
+  const trees = [new RedBlackTree(descend), new RedBlackTree(descend)] as const;
   const values: number[] = [-10, 9, -1, 100, 1, 0, -100, 10, -9];
 
   const expectedMin: number[][] = [
@@ -178,10 +170,7 @@ test("RedBlackTree works as exepcted with descend comparator", () => {
     assert.deepStrictEqual(tree.size, values.length);
     assert.deepStrictEqual(tree.isEmpty(), false);
 
-    assert.deepStrictEqual(
-      [...tree],
-      [100, 10, 9, 1, 0, -1, -9, -10, -100],
-    );
+    assert.deepStrictEqual([...tree], [100, 10, 9, 1, 0, -1, -9, -10, -100]);
     assert.deepStrictEqual(tree.size, values.length);
     assert.deepStrictEqual(tree.isEmpty(), false);
 
@@ -253,11 +242,10 @@ test("RedBlackTree works as exepcted with descend comparator", () => {
   }
 });
 
-test("RedBlackTree works with object items", () => {
-  const tree: RedBlackTree<Container> = new RedBlackTree((
-    a: Container,
-    b: Container,
-  ) => ascend(a.id, b.id));
+test('RedBlackTree works with object items', () => {
+  const tree: RedBlackTree<Container> = new RedBlackTree(
+    (a: Container, b: Container) => ascend(a.id, b.id),
+  );
   const ids: number[] = [-10, 9, -1, 100, 1, 0, -100, 10, -9];
 
   for (const [i, id] of ids.entries()) {
@@ -271,15 +259,15 @@ test("RedBlackTree works with object items", () => {
   }
   for (const [i, id] of ids.entries()) {
     const newContainer: Container = { id, values: [] };
-    assert.deepStrictEqual(
-      tree.find({ id } as Container),
-      { id, values: [i - 1, i, i + 1] },
-    );
+    assert.deepStrictEqual(tree.find({ id } as Container), {
+      id,
+      values: [i - 1, i, i + 1],
+    });
     assert.deepStrictEqual(tree.insert(newContainer), false);
-    assert.deepStrictEqual(
-      tree.find({ id, values: [] }),
-      { id, values: [i - 1, i, i + 1] },
-    );
+    assert.deepStrictEqual(tree.find({ id, values: [] }), {
+      id,
+      values: [i - 1, i, i + 1],
+    });
     assert.deepStrictEqual(tree.size, ids.length);
     assert.deepStrictEqual(tree.isEmpty(), false);
   }
@@ -295,46 +283,73 @@ test("RedBlackTree works with object items", () => {
   for (const [i, id] of ids.entries()) {
     assert.deepStrictEqual(tree.size, ids.length - i);
     assert.deepStrictEqual(tree.isEmpty(), false);
-    assert.deepStrictEqual(
-      tree.find({ id, values: [] }),
-      { id, values: [i - 1, i, i + 1] },
-    );
+    assert.deepStrictEqual(tree.find({ id, values: [] }), {
+      id,
+      values: [i - 1, i, i + 1],
+    });
 
     assert.deepStrictEqual(tree.remove({ id, values: [] }), true);
     expected.splice(expected.indexOf(id), 1);
-    assert.deepStrictEqual([...tree].map((container) => container.id), expected);
+    assert.deepStrictEqual(
+      [...tree].map((container) => container.id),
+      expected,
+    );
     assert.deepStrictEqual(tree.find({ id, values: [] }), null);
 
     assert.deepStrictEqual(tree.remove({ id, values: [] }), false);
-    assert.deepStrictEqual([...tree].map((container) => container.id), expected);
+    assert.deepStrictEqual(
+      [...tree].map((container) => container.id),
+      expected,
+    );
     assert.deepStrictEqual(tree.find({ id, values: [] }), null);
   }
   assert.deepStrictEqual(tree.size, 0);
   assert.deepStrictEqual(tree.isEmpty(), true);
 });
 
-test("RedBlackTree.from() handles Iterable", () => {
+test('RedBlackTree.from() handles Iterable', () => {
   const values: number[] = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const originalValues: number[] = Array.from(values);
   const expected: number[] = [-100, -10, -9, -1, 0, 1, 9, 10, 100];
   let tree: RedBlackTree<number> = RedBlackTree.from(values);
   assert.deepStrictEqual(values, originalValues);
   assert.deepStrictEqual([...tree], expected);
-  assert.deepStrictEqual([...tree.nlrValues()], [-1, -10, -100, -9, 9, 1, 0, 100, 10]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-1, -10, 9, -100, -9, 1, 100, 0, 10]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-1, -10, -100, -9, 9, 1, 0, 100, 10],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-1, -10, 9, -100, -9, 1, 100, 0, 10],
+  );
 
   tree = RedBlackTree.from(values, { compare: descend });
   assert.deepStrictEqual(values, originalValues);
   assert.deepStrictEqual([...tree].reverse(), expected);
-  assert.deepStrictEqual([...tree.nlrValues()], [-1, 9, 100, 10, 1, 0, -10, -9, -100]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-1, 9, -10, 100, 1, -9, -100, 10, 0]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-1, 9, 100, 10, 1, 0, -10, -9, -100],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-1, 9, -10, 100, 1, -9, -100, 10, 0],
+  );
 
   tree = RedBlackTree.from(values, {
     map: (v: number) => 2 * v,
   });
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 2 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-2, -20, -200, -18, 18, 2, 0, 200, 20]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-2, -20, 18, -200, -18, 2, 200, 0, 20]);
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 2 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-2, -20, -200, -18, 18, 2, 0, 200, 20],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-2, -20, 18, -200, -18, 2, 200, 0, 20],
+  );
 
   const math = new MyMath();
   tree = RedBlackTree.from(values, {
@@ -344,18 +359,36 @@ test("RedBlackTree.from() handles Iterable", () => {
     thisArg: math,
   });
   assert.deepStrictEqual(values, originalValues);
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 3 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-3, -30, -300, -27, 27, 3, 0, 300, 30]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-3, -30, 27, -300, -27, 3, 300, 0, 30]);
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 3 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-3, -30, -300, -27, 27, 3, 0, 300, 30],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-3, -30, 27, -300, -27, 3, 300, 0, 30],
+  );
 
   tree = RedBlackTree.from(values, {
     compare: descend,
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual(values, originalValues);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 2 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-2, 18, 200, 20, 2, 0, -20, -18, -200]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-2, 18, -20, 200, 2, -18, -200, 20, 0]);
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 2 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-2, 18, 200, 20, 2, 0, -20, -18, -200],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-2, 18, -20, 200, 2, -18, -200, 20, 0],
+  );
 
   tree = RedBlackTree.from(values, {
     compare: descend,
@@ -365,12 +398,21 @@ test("RedBlackTree.from() handles Iterable", () => {
     thisArg: math,
   });
   assert.deepStrictEqual(values, originalValues);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 3 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-3, 27, 300, 30, 3, 0, -30, -27, -300]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-3, 27, -30, 300, 3, -27, -300, 30, 0]);
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 3 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-3, 27, 300, 30, 3, 0, -30, -27, -300],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-3, 27, -30, 300, 3, -27, -300, 30, 0],
+  );
 });
 
-test("RedBlackTree.from() handles default ascend comparator", () => {
+test('RedBlackTree.from() handles default ascend comparator', () => {
   const values: number[] = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const expected: number[] = [-100, -10, -9, -1, 0, 1, 9, 10, 100];
   const originalTree: RedBlackTree<number> = new RedBlackTree();
@@ -384,16 +426,31 @@ test("RedBlackTree.from() handles default ascend comparator", () => {
   tree = RedBlackTree.from(originalTree, { compare: descend });
   assert.deepStrictEqual([...originalTree], expected);
   assert.deepStrictEqual([...tree].reverse(), expected);
-  assert.deepStrictEqual([...tree.nlrValues()], [-1, 1, 10, 100, 9, 0, -10, -9, -100]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-1, 1, -10, 10, 0, -9, -100, 100, 9]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-1, 1, 10, 100, 9, 0, -10, -9, -100],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-1, 1, -10, 10, 0, -9, -100, 100, 9],
+  );
 
   tree = RedBlackTree.from(originalTree, {
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 2 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-2, -20, -200, -18, 2, 0, 20, 18, 200]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-2, -20, 2, -200, -18, 0, 20, 18, 200]);
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 2 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-2, -20, -200, -18, 2, 0, 20, 18, 200],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-2, -20, 2, -200, -18, 0, 20, 18, 200],
+  );
 
   const math = new MyMath();
   tree = RedBlackTree.from(originalTree, {
@@ -403,18 +460,36 @@ test("RedBlackTree.from() handles default ascend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 3 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-3, -30, -300, -27, 3, 0, 30, 27, 300]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-3, -30, 3, -300, -27, 0, 30, 27, 300]);
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 3 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-3, -30, -300, -27, 3, 0, 30, 27, 300],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-3, -30, 3, -300, -27, 0, 30, 27, 300],
+  );
 
   tree = RedBlackTree.from(originalTree, {
     compare: descend,
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 2 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-2, 2, 20, 200, 18, 0, -20, -18, -200]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-2, 2, -20, 20, 0, -18, -200, 200, 18]);
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 2 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-2, 2, 20, 200, 18, 0, -20, -18, -200],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-2, 2, -20, 20, 0, -18, -200, 200, 18],
+  );
 
   tree = RedBlackTree.from(originalTree, {
     compare: descend,
@@ -424,12 +499,21 @@ test("RedBlackTree.from() handles default ascend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 3 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-3, 3, 30, 300, 27, 0, -30, -27, -300]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-3, 3, -30, 30, 0, -27, -300, 300, 27]);
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 3 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-3, 3, 30, 300, 27, 0, -30, -27, -300],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-3, 3, -30, 30, 0, -27, -300, 300, 27],
+  );
 });
 
-test("RedBlackTree.from() handles descend comparator", () => {
+test('RedBlackTree.from() handles descend comparator', () => {
   const values: number[] = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const expected: number[] = [100, 10, 9, 1, 0, -1, -9, -10, -100];
   const originalTree: RedBlackTree<number> = new RedBlackTree(descend);
@@ -443,16 +527,31 @@ test("RedBlackTree.from() handles descend comparator", () => {
   tree = RedBlackTree.from(originalTree, { compare: ascend });
   assert.deepStrictEqual([...originalTree], expected);
   assert.deepStrictEqual([...tree].reverse(), expected);
-  assert.deepStrictEqual([...tree.nlrValues()], [1, -1, -10, -100, -9, 0, 10, 9, 100]);
-  assert.deepStrictEqual([...tree.lvlValues()], [1, -1, 10, -10, 0, 9, 100, -100, -9]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [1, -1, -10, -100, -9, 0, 10, 9, 100],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [1, -1, 10, -10, 0, 9, 100, -100, -9],
+  );
 
   tree = RedBlackTree.from(originalTree, {
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 2 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [2, 20, 200, 18, -2, 0, -20, -18, -200]);
-  assert.deepStrictEqual([...tree.lvlValues()], [2, 20, -2, 200, 18, 0, -20, -18, -200]);
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 2 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [2, 20, 200, 18, -2, 0, -20, -18, -200],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [2, 20, -2, 200, 18, 0, -20, -18, -200],
+  );
 
   const math = new MyMath();
   tree = RedBlackTree.from(originalTree, {
@@ -462,18 +561,36 @@ test("RedBlackTree.from() handles descend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 3 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [3, 30, 300, 27, -3, 0, -30, -27, -300]);
-  assert.deepStrictEqual([...tree.lvlValues()], [3, 30, -3, 300, 27, 0, -30, -27, -300]);
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 3 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [3, 30, 300, 27, -3, 0, -30, -27, -300],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [3, 30, -3, 300, 27, 0, -30, -27, -300],
+  );
 
   tree = RedBlackTree.from(originalTree, {
     compare: ascend,
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 2 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [2, -2, -20, -200, -18, 0, 20, 18, 200]);
-  assert.deepStrictEqual([...tree.lvlValues()], [2, -2, 20, -20, 0, 18, 200, -200, -18]);
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 2 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [2, -2, -20, -200, -18, 0, 20, 18, 200],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [2, -2, 20, -20, 0, 18, 200, -200, -18],
+  );
 
   tree = RedBlackTree.from(originalTree, {
     compare: ascend,
@@ -483,24 +600,45 @@ test("RedBlackTree.from() handles descend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 3 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [3, -3, -30, -300, -27, 0, 30, 27, 300]);
-  assert.deepStrictEqual([...tree.lvlValues()], [3, -3, 30, -30, 0, 27, 300, -300, -27]);
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 3 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [3, -3, -30, -300, -27, 0, 30, 27, 300],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [3, -3, 30, -30, 0, 27, 300, -300, -27],
+  );
 });
 
-test("RedBlackTree() inserts rebalance left", () => {
+test('RedBlackTree() inserts rebalance left', () => {
   let values: number[] = [8, 4, 10, 0, 6, 11, -2, 2];
   let tree: RedBlackTree<number> = RedBlackTree.from(values);
   assert.deepStrictEqual([...tree.nlrValues()], [8, 4, 0, -2, 2, 6, 10, 11]);
   assert.deepStrictEqual([...tree.lvlValues()], [8, 4, 10, 0, 6, 11, -2, 2]);
   assert.deepStrictEqual(tree.insert(-3), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [4, 0, -2, -3, 2, 8, 6, 10, 11]);
-  assert.deepStrictEqual([...tree.lvlValues()], [4, 0, 8, -2, 2, 6, 10, -3, 11]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [4, 0, -2, -3, 2, 8, 6, 10, 11],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [4, 0, 8, -2, 2, 6, 10, -3, 11],
+  );
 
   tree = RedBlackTree.from(values);
   assert.deepStrictEqual(tree.insert(-1), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [4, 0, -2, -1, 2, 8, 6, 10, 11]);
-  assert.deepStrictEqual([...tree.lvlValues()], [4, 0, 8, -2, 2, 6, 10, -1, 11]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [4, 0, -2, -1, 2, 8, 6, 10, 11],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [4, 0, 8, -2, 2, 6, 10, -1, 11],
+  );
 
   tree = RedBlackTree.from(values);
   assert.deepStrictEqual(tree.insert(1), true);
@@ -517,13 +655,25 @@ test("RedBlackTree() inserts rebalance left", () => {
   assert.deepStrictEqual([...tree.nlrValues()], [4, -4, -5, 0, -2, 2, 6, 7]);
   assert.deepStrictEqual([...tree.lvlValues()], [4, -4, 6, -5, 0, 7, -2, 2]);
   assert.deepStrictEqual(tree.insert(-3), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [0, -4, -5, -2, -3, 4, 2, 6, 7]);
-  assert.deepStrictEqual([...tree.lvlValues()], [0, -4, 4, -5, -2, 2, 6, -3, 7]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [0, -4, -5, -2, -3, 4, 2, 6, 7],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [0, -4, 4, -5, -2, 2, 6, -3, 7],
+  );
 
   tree = RedBlackTree.from(values);
   assert.deepStrictEqual(tree.insert(-1), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [0, -4, -5, -2, -1, 4, 2, 6, 7]);
-  assert.deepStrictEqual([...tree.lvlValues()], [0, -4, 4, -5, -2, 2, 6, -1, 7]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [0, -4, -5, -2, -1, 4, 2, 6, 7],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [0, -4, 4, -5, -2, 2, 6, -1, 7],
+  );
 
   tree = RedBlackTree.from(values);
   assert.deepStrictEqual(tree.insert(1), true);
@@ -536,55 +686,109 @@ test("RedBlackTree() inserts rebalance left", () => {
   assert.deepStrictEqual([...tree.lvlValues()], [0, -4, 4, -5, -2, 2, 6, 3, 7]);
 });
 
-test("RedBlackTree() inserts rebalance right", () => {
+test('RedBlackTree() inserts rebalance right', () => {
   let values: number[] = [-4, -6, 4, 0, 6, -7, -2, 2];
   let tree: RedBlackTree<number> = RedBlackTree.from(values);
   assert.deepStrictEqual([...tree.nlrValues()], [-4, -6, -7, 4, 0, -2, 2, 6]);
   assert.deepStrictEqual([...tree.lvlValues()], [-4, -6, 4, -7, 0, 6, -2, 2]);
   assert.deepStrictEqual(tree.insert(-3), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [0, -4, -6, -7, -2, -3, 4, 2, 6]);
-  assert.deepStrictEqual([...tree.lvlValues()], [0, -4, 4, -6, -2, 2, 6, -7, -3]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [0, -4, -6, -7, -2, -3, 4, 2, 6],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [0, -4, 4, -6, -2, 2, 6, -7, -3],
+  );
 
   tree = RedBlackTree.from(values);
   assert.deepStrictEqual(tree.insert(-1), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [0, -4, -6, -7, -2, -1, 4, 2, 6]);
-  assert.deepStrictEqual([...tree.lvlValues()], [0, -4, 4, -6, -2, 2, 6, -7, -1]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [0, -4, -6, -7, -2, -1, 4, 2, 6],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [0, -4, 4, -6, -2, 2, 6, -7, -1],
+  );
 
   tree = RedBlackTree.from(values);
   assert.deepStrictEqual(tree.insert(1), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [0, -4, -6, -7, -2, 4, 2, 1, 6]);
-  assert.deepStrictEqual([...tree.lvlValues()], [0, -4, 4, -6, -2, 2, 6, -7, 1]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [0, -4, -6, -7, -2, 4, 2, 1, 6],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [0, -4, 4, -6, -2, 2, 6, -7, 1],
+  );
 
   tree = RedBlackTree.from(values);
   assert.deepStrictEqual(tree.insert(3), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [0, -4, -6, -7, -2, 4, 2, 3, 6]);
-  assert.deepStrictEqual([...tree.lvlValues()], [0, -4, 4, -6, -2, 2, 6, -7, 3]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [0, -4, -6, -7, -2, 4, 2, 3, 6],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [0, -4, 4, -6, -2, 2, 6, -7, 3],
+  );
 
   values = [-8, -10, -4, -11, -6, 0, -2, 2];
   tree = RedBlackTree.from(values);
-  assert.deepStrictEqual([...tree.nlrValues()], [-8, -10, -11, -4, -6, 0, -2, 2]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-8, -10, -4, -11, -6, 0, -2, 2]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-8, -10, -11, -4, -6, 0, -2, 2],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-8, -10, -4, -11, -6, 0, -2, 2],
+  );
   assert.deepStrictEqual(tree.insert(-3), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [-4, -8, -10, -11, -6, 0, -2, -3, 2]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-4, -8, 0, -10, -6, -2, 2, -11, -3]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-4, -8, -10, -11, -6, 0, -2, -3, 2],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-4, -8, 0, -10, -6, -2, 2, -11, -3],
+  );
 
   tree = RedBlackTree.from(values);
   assert.deepStrictEqual(tree.insert(-1), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [-4, -8, -10, -11, -6, 0, -2, -1, 2]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-4, -8, 0, -10, -6, -2, 2, -11, -1]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-4, -8, -10, -11, -6, 0, -2, -1, 2],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-4, -8, 0, -10, -6, -2, 2, -11, -1],
+  );
 
   tree = RedBlackTree.from(values);
   assert.deepStrictEqual(tree.insert(1), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [-4, -8, -10, -11, -6, 0, -2, 2, 1]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-4, -8, 0, -10, -6, -2, 2, -11, 1]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-4, -8, -10, -11, -6, 0, -2, 2, 1],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-4, -8, 0, -10, -6, -2, 2, -11, 1],
+  );
 
   tree = RedBlackTree.from(values);
   assert.deepStrictEqual(tree.insert(3), true);
-  assert.deepStrictEqual([...tree.nlrValues()], [-4, -8, -10, -11, -6, 0, -2, 2, 3]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-4, -8, 0, -10, -6, -2, 2, -11, 3]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-4, -8, -10, -11, -6, 0, -2, 2, 3],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-4, -8, 0, -10, -6, -2, 2, -11, 3],
+  );
 });
 
-test("RedBlackTree removes rebalance root", () => {
+test('RedBlackTree removes rebalance root', () => {
   let values: number[] = [0];
   let tree: RedBlackTree<number> = RedBlackTree.from(values);
   assert.deepStrictEqual([...tree.nlrValues()], [0]);
@@ -842,7 +1046,7 @@ test("RedBlackTree removes rebalance root", () => {
   assert.deepStrictEqual([...tree.lvlValues()], [0, -2, 2]);
 });
 
-test("RedBlackTree removes rebalance left", () => {
+test('RedBlackTree removes rebalance left', () => {
   let values = [4, 5, 0];
   let tree = RedBlackTree.from(values);
   assert.deepStrictEqual([...tree.nlrValues()], [4, 0, 5]);
@@ -1174,7 +1378,7 @@ test("RedBlackTree removes rebalance left", () => {
   assert.deepStrictEqual([...tree.lvlValues()], [0, -2, 3, 2, 4]);
 });
 
-test("RedBlackTree removes rebalance right", () => {
+test('RedBlackTree removes rebalance right', () => {
   let values = [-4, -5, 0];
   let tree = RedBlackTree.from(values);
   assert.deepStrictEqual([...tree.nlrValues()], [-4, -5, 0]);
@@ -1327,8 +1531,14 @@ test("RedBlackTree removes rebalance right", () => {
 
   values = [-4, -5, 0, -2, 2, -3, -1, 1, 3];
   tree = RedBlackTree.from(values);
-  assert.deepStrictEqual([...tree.nlrValues()], [-4, -5, 0, -2, -3, -1, 2, 1, 3]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-4, -5, 0, -2, 2, -3, -1, 1, 3]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-4, -5, 0, -2, -3, -1, 2, 1, 3],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-4, -5, 0, -2, 2, -3, -1, 1, 3],
+  );
   assert.deepStrictEqual(tree.remove(0), true);
   assert.deepStrictEqual([...tree.nlrValues()], [-4, -5, 1, -2, -3, -1, 2, 3]);
   assert.deepStrictEqual([...tree.lvlValues()], [-4, -5, 1, -2, 2, -3, -1, 3]);
@@ -1506,7 +1716,7 @@ test("RedBlackTree removes rebalance right", () => {
   assert.deepStrictEqual([...tree.lvlValues()], [0, -4, 2, -2, 3]);
 });
 
-test("RedBlackTree works with README example", () => {
+test('RedBlackTree works with README example', () => {
   const values = [3, 10, 13, 4, 6, 7, 1, 14];
   const tree = new RedBlackTree<number>();
   values.forEach((value) => tree.insert(value));
@@ -1530,34 +1740,24 @@ test("RedBlackTree works with README example", () => {
   assert.deepStrictEqual(invertedTree.remove(7), true);
   assert.deepStrictEqual([...invertedTree], [14, 13, 10, 6, 4, 3, 1]);
 
-  const words = new RedBlackTree<string>((a, b) =>
-    ascend(a.length, b.length) || ascend(a, b)
+  const words = new RedBlackTree<string>(
+    (a, b) => ascend(a.length, b.length) || ascend(a, b),
   );
-  ["truck", "car", "helicopter", "tank", "train", "suv", "semi", "van"]
-    .forEach((value) => words.insert(value));
-  assert.deepStrictEqual([...words], [
-    "car",
-    "suv",
-    "van",
-    "semi",
-    "tank",
-    "train",
-    "truck",
-    "helicopter",
-  ]);
-  assert.deepStrictEqual(words.min(), "car");
-  assert.deepStrictEqual(words.max(), "helicopter");
-  assert.deepStrictEqual(words.find("scooter"), null);
-  assert.deepStrictEqual(words.find("tank"), "tank");
-  assert.deepStrictEqual(words.remove("scooter"), false);
-  assert.deepStrictEqual(words.remove("tank"), true);
-  assert.deepStrictEqual([...words], [
-    "car",
-    "suv",
-    "van",
-    "semi",
-    "train",
-    "truck",
-    "helicopter",
-  ]);
+  ['truck', 'car', 'helicopter', 'tank', 'train', 'suv', 'semi', 'van'].forEach(
+    (value) => words.insert(value),
+  );
+  assert.deepStrictEqual(
+    [...words],
+    ['car', 'suv', 'van', 'semi', 'tank', 'train', 'truck', 'helicopter'],
+  );
+  assert.deepStrictEqual(words.min(), 'car');
+  assert.deepStrictEqual(words.max(), 'helicopter');
+  assert.deepStrictEqual(words.find('scooter'), null);
+  assert.deepStrictEqual(words.find('tank'), 'tank');
+  assert.deepStrictEqual(words.remove('scooter'), false);
+  assert.deepStrictEqual(words.remove('tank'), true);
+  assert.deepStrictEqual(
+    [...words],
+    ['car', 'suv', 'van', 'semi', 'train', 'truck', 'helicopter'],
+  );
 });

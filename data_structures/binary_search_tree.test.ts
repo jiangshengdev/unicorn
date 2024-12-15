@@ -1,7 +1,7 @@
 // Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 import assert from 'node:assert/strict';
-import { BinarySearchTree } from "./binary_search_tree.ts";
-import { ascend, descend } from "./comparators.ts";
+import { BinarySearchTree } from './binary_search_tree.ts';
+import { ascend, descend } from './comparators.ts';
 
 class MyMath {
   multiply(a: number, b: number): number {
@@ -14,21 +14,19 @@ interface Container {
   values: number[];
 }
 
-test("BinarySearchTree throws if compare is not a function", () => {
+test('BinarySearchTree throws if compare is not a function', () => {
   assert.throws(
     () => new BinarySearchTree({} as (a: number, b: number) => number),
     {
       name: 'TypeError',
-      message: "Cannot construct a BinarySearchTree: the 'compare' parameter is not a function, did you mean to call BinarySearchTree.from?",
-    }
+      message:
+        "Cannot construct a BinarySearchTree: the 'compare' parameter is not a function, did you mean to call BinarySearchTree.from?",
+    },
   );
 });
 
-test("BinarySearchTree handles default ascend comparator", () => {
-  const trees = [
-    new BinarySearchTree(),
-    new BinarySearchTree(),
-  ] as const;
+test('BinarySearchTree handles default ascend comparator', () => {
+  const trees = [new BinarySearchTree(), new BinarySearchTree()] as const;
   const values: number[] = [-10, 9, -1, 100, 1, 0, -100, 10, -9];
 
   const expectedMin: number[][] = [
@@ -69,10 +67,7 @@ test("BinarySearchTree handles default ascend comparator", () => {
     assert.strictEqual(tree.size, values.length);
     assert.strictEqual(tree.isEmpty(), false);
 
-    assert.deepStrictEqual(
-      [...tree],
-      [-100, -10, -9, -1, 0, 1, 9, 10, 100],
-    );
+    assert.deepStrictEqual([...tree], [-100, -10, -9, -1, 0, 1, 9, 10, 100]);
     assert.strictEqual(tree.size, values.length);
     assert.strictEqual(tree.isEmpty(), false);
 
@@ -144,7 +139,7 @@ test("BinarySearchTree handles default ascend comparator", () => {
   }
 });
 
-test("BinarySearchTree handles descend comparator", () => {
+test('BinarySearchTree handles descend comparator', () => {
   const trees = [
     new BinarySearchTree(descend),
     new BinarySearchTree(descend),
@@ -189,10 +184,7 @@ test("BinarySearchTree handles descend comparator", () => {
     assert.strictEqual(tree.size, values.length);
     assert.strictEqual(tree.isEmpty(), false);
 
-    assert.deepStrictEqual(
-      [...tree],
-      [100, 10, 9, 1, 0, -1, -9, -10, -100],
-    );
+    assert.deepStrictEqual([...tree], [100, 10, 9, 1, 0, -1, -9, -10, -100]);
     assert.strictEqual(tree.size, values.length);
     assert.strictEqual(tree.isEmpty(), false);
 
@@ -264,11 +256,10 @@ test("BinarySearchTree handles descend comparator", () => {
   }
 });
 
-test("BinarySearchTree contains objects", () => {
-  const tree: BinarySearchTree<Container> = new BinarySearchTree((
-    a: Container,
-    b: Container,
-  ) => ascend(a.id, b.id));
+test('BinarySearchTree contains objects', () => {
+  const tree: BinarySearchTree<Container> = new BinarySearchTree(
+    (a: Container, b: Container) => ascend(a.id, b.id),
+  );
   const ids = [-10, 9, -1, 100, 1, 0, -100, 10, -9];
 
   for (const [i, id] of ids.entries()) {
@@ -282,15 +273,15 @@ test("BinarySearchTree contains objects", () => {
   }
   for (const [i, id] of ids.entries()) {
     const newContainer: Container = { id, values: [] };
-    assert.deepStrictEqual(
-      tree.find({ id } as Container),
-      { id, values: [i - 1, i, i + 1] },
-    );
+    assert.deepStrictEqual(tree.find({ id } as Container), {
+      id,
+      values: [i - 1, i, i + 1],
+    });
     assert.strictEqual(tree.insert(newContainer), false);
-    assert.deepStrictEqual(
-      tree.find({ id, values: [] }),
-      { id, values: [i - 1, i, i + 1] },
-    );
+    assert.deepStrictEqual(tree.find({ id, values: [] }), {
+      id,
+      values: [i - 1, i, i + 1],
+    });
     assert.strictEqual(tree.size, ids.length);
     assert.strictEqual(tree.isEmpty(), false);
   }
@@ -306,46 +297,73 @@ test("BinarySearchTree contains objects", () => {
   for (const [i, id] of ids.entries()) {
     assert.strictEqual(tree.size, ids.length - i);
     assert.strictEqual(tree.isEmpty(), false);
-    assert.deepStrictEqual(
-      tree.find({ id, values: [] }),
-      { id, values: [i - 1, i, i + 1] },
-    );
+    assert.deepStrictEqual(tree.find({ id, values: [] }), {
+      id,
+      values: [i - 1, i, i + 1],
+    });
 
     assert.strictEqual(tree.remove({ id, values: [] }), true);
     expected.splice(expected.indexOf(id), 1);
-    assert.deepStrictEqual([...tree].map((container) => container.id), expected);
+    assert.deepStrictEqual(
+      [...tree].map((container) => container.id),
+      expected,
+    );
     assert.strictEqual(tree.find({ id, values: [] }), null);
 
     assert.strictEqual(tree.remove({ id, values: [] }), false);
-    assert.deepStrictEqual([...tree].map((container) => container.id), expected);
+    assert.deepStrictEqual(
+      [...tree].map((container) => container.id),
+      expected,
+    );
     assert.strictEqual(tree.find({ id, values: [] }), null);
   }
   assert.strictEqual(tree.size, 0);
   assert.strictEqual(tree.isEmpty(), true);
 });
 
-test("BinarySearchTree.from() handles iterable", () => {
+test('BinarySearchTree.from() handles iterable', () => {
   const values: number[] = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const originalValues: number[] = Array.from(values);
   const expected: number[] = [-100, -10, -9, -1, 0, 1, 9, 10, 100];
   let tree: BinarySearchTree<number> = BinarySearchTree.from(values);
   assert.deepStrictEqual(values, originalValues);
   assert.deepStrictEqual([...tree], expected);
-  assert.deepStrictEqual([...tree.nlrValues()], [-10, -100, 9, -1, -9, 1, 0, 100, 10]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-10, -100, 9, -1, 100, -9, 1, 10, 0]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-10, -100, 9, -1, -9, 1, 0, 100, 10],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-10, -100, 9, -1, 100, -9, 1, 10, 0],
+  );
 
   tree = BinarySearchTree.from(values, { compare: descend });
   assert.deepStrictEqual(values, originalValues);
   assert.deepStrictEqual([...tree].reverse(), expected);
-  assert.deepStrictEqual([...tree.nlrValues()], [-10, 9, 100, 10, -1, 1, 0, -9, -100]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-10, 9, -100, 100, -1, 10, 1, -9, 0]);
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-10, 9, 100, 10, -1, 1, 0, -9, -100],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-10, 9, -100, 100, -1, 10, 1, -9, 0],
+  );
 
   tree = BinarySearchTree.from(values, {
     map: (v: number) => 2 * v,
   });
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 2 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-20, -200, 18, -2, -18, 2, 0, 200, 20]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-20, -200, 18, -2, 200, -18, 2, 20, 0]);
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 2 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-20, -200, 18, -2, -18, 2, 0, 200, 20],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-20, -200, 18, -2, 200, -18, 2, 20, 0],
+  );
 
   const math = new MyMath();
   tree = BinarySearchTree.from(values, {
@@ -355,18 +373,36 @@ test("BinarySearchTree.from() handles iterable", () => {
     thisArg: math,
   });
   assert.deepStrictEqual(values, originalValues);
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 3 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-30, -300, 27, -3, -27, 3, 0, 300, 30]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-30, -300, 27, -3, 300, -27, 3, 30, 0]);
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 3 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-30, -300, 27, -3, -27, 3, 0, 300, 30],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-30, -300, 27, -3, 300, -27, 3, 30, 0],
+  );
 
   tree = BinarySearchTree.from(values, {
     compare: descend,
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual(values, originalValues);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 2 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-20, 18, 200, 20, -2, 2, 0, -18, -200]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-20, 18, -200, 200, -2, 20, 2, -18, 0]);
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 2 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-20, 18, 200, 20, -2, 2, 0, -18, -200],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-20, 18, -200, 200, -2, 20, 2, -18, 0],
+  );
 
   tree = BinarySearchTree.from(values, {
     compare: descend,
@@ -376,12 +412,21 @@ test("BinarySearchTree.from() handles iterable", () => {
     thisArg: math,
   });
   assert.deepStrictEqual(values, originalValues);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 3 * v));
-  assert.deepStrictEqual([...tree.nlrValues()], [-30, 27, 300, 30, -3, 3, 0, -27, -300]);
-  assert.deepStrictEqual([...tree.lvlValues()], [-30, 27, -300, 300, -3, 30, 3, -27, 0]);
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 3 * v),
+  );
+  assert.deepStrictEqual(
+    [...tree.nlrValues()],
+    [-30, 27, 300, 30, -3, 3, 0, -27, -300],
+  );
+  assert.deepStrictEqual(
+    [...tree.lvlValues()],
+    [-30, 27, -300, 300, -3, 30, 3, -27, 0],
+  );
 });
 
-test("BinarySearchTree.from() handles default ascend comparator", () => {
+test('BinarySearchTree.from() handles default ascend comparator', () => {
   const values: number[] = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const expected: number[] = [-100, -10, -9, -1, 0, 1, 9, 10, 100];
   const originalTree: BinarySearchTree<number> = new BinarySearchTree();
@@ -402,7 +447,10 @@ test("BinarySearchTree.from() handles default ascend comparator", () => {
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 2 * v));
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 2 * v),
+  );
 
   const math = new MyMath();
   tree = BinarySearchTree.from(originalTree, {
@@ -412,14 +460,20 @@ test("BinarySearchTree.from() handles default ascend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 3 * v));
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 3 * v),
+  );
 
   tree = BinarySearchTree.from(originalTree, {
     compare: descend,
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 2 * v));
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 2 * v),
+  );
 
   tree = BinarySearchTree.from(originalTree, {
     compare: descend,
@@ -429,10 +483,13 @@ test("BinarySearchTree.from() handles default ascend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 3 * v));
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 3 * v),
+  );
 });
 
-test("BinarySearchTree.from() handles descend comparator", () => {
+test('BinarySearchTree.from() handles descend comparator', () => {
   const values: number[] = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const expected: number[] = [100, 10, 9, 1, 0, -1, -9, -10, -100];
   const originalTree = new BinarySearchTree<number>(descend);
@@ -453,7 +510,10 @@ test("BinarySearchTree.from() handles descend comparator", () => {
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 2 * v));
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 2 * v),
+  );
 
   const math = new MyMath();
   tree = BinarySearchTree.from(originalTree, {
@@ -463,14 +523,20 @@ test("BinarySearchTree.from() handles descend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree], expected.map((v: number) => 3 * v));
+  assert.deepStrictEqual(
+    [...tree],
+    expected.map((v: number) => 3 * v),
+  );
 
   tree = BinarySearchTree.from(originalTree, {
     compare: ascend,
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 2 * v));
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 2 * v),
+  );
 
   tree = BinarySearchTree.from(originalTree, {
     compare: ascend,
@@ -480,10 +546,13 @@ test("BinarySearchTree.from() handles descend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...originalTree], expected);
-  assert.deepStrictEqual([...tree].reverse(), expected.map((v: number) => 3 * v));
+  assert.deepStrictEqual(
+    [...tree].reverse(),
+    expected.map((v: number) => 3 * v),
+  );
 });
 
-test("BinarySearchTree handles README example", () => {
+test('BinarySearchTree handles README example', () => {
   const values = [3, 10, 13, 4, 6, 7, 1, 14];
   const tree = new BinarySearchTree<number>();
   values.forEach((value) => tree.insert(value));
@@ -507,46 +576,36 @@ test("BinarySearchTree handles README example", () => {
   assert.strictEqual(invertedTree.remove(7), true);
   assert.deepStrictEqual([...invertedTree], [14, 13, 10, 6, 4, 3, 1]);
 
-  const words = new BinarySearchTree<string>((a, b) =>
-    ascend(a.length, b.length) || ascend(a, b)
+  const words = new BinarySearchTree<string>(
+    (a, b) => ascend(a.length, b.length) || ascend(a, b),
   );
-  ["truck", "car", "helicopter", "tank", "train", "suv", "semi", "van"]
-    .forEach((value) => words.insert(value));
-  assert.deepStrictEqual([...words], [
-    "car",
-    "suv",
-    "van",
-    "semi",
-    "tank",
-    "train",
-    "truck",
-    "helicopter",
-  ]);
-  assert.strictEqual(words.min(), "car");
-  assert.strictEqual(words.max(), "helicopter");
-  assert.strictEqual(words.find("scooter"), null);
-  assert.strictEqual(words.find("tank"), "tank");
-  assert.strictEqual(words.remove("scooter"), false);
-  assert.strictEqual(words.remove("tank"), true);
-  assert.deepStrictEqual([...words], [
-    "car",
-    "suv",
-    "van",
-    "semi",
-    "train",
-    "truck",
-    "helicopter",
-  ]);
+  ['truck', 'car', 'helicopter', 'tank', 'train', 'suv', 'semi', 'van'].forEach(
+    (value) => words.insert(value),
+  );
+  assert.deepStrictEqual(
+    [...words],
+    ['car', 'suv', 'van', 'semi', 'tank', 'train', 'truck', 'helicopter'],
+  );
+  assert.strictEqual(words.min(), 'car');
+  assert.strictEqual(words.max(), 'helicopter');
+  assert.strictEqual(words.find('scooter'), null);
+  assert.strictEqual(words.find('tank'), 'tank');
+  assert.strictEqual(words.remove('scooter'), false);
+  assert.strictEqual(words.remove('tank'), true);
+  assert.deepStrictEqual(
+    [...words],
+    ['car', 'suv', 'van', 'semi', 'train', 'truck', 'helicopter'],
+  );
 });
 
-test("BinarySearchTree.max() handles null ", () => {
+test('BinarySearchTree.max() handles null ', () => {
   const tree = BinarySearchTree.from([1]);
   assert(!tree.isEmpty());
   tree.clear();
   assert.strictEqual(tree.max(), null);
 });
 
-test("BinarySearchTree.clear()", () => {
+test('BinarySearchTree.clear()', () => {
   const tree = BinarySearchTree.from([1]);
   tree.clear();
   assert(tree.isEmpty());

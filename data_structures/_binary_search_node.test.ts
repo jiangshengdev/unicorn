@@ -1,6 +1,6 @@
 // Copyright 2018-2024 the Deno authors. All rights reserved. MIT license.
 import assert from 'node:assert/strict';
-import { BinarySearchNode } from "./_binary_search_node.ts";
+import { BinarySearchNode } from './_binary_search_node.ts';
 
 let parent: BinarySearchNode<number>;
 let child: BinarySearchNode<number>;
@@ -10,7 +10,7 @@ function beforeEach() {
   parent.right = child;
 }
 
-test("BinarySearchNode", () => {
+test('BinarySearchNode', () => {
   beforeEach();
   assert.strictEqual(parent.parent, null);
   assert.strictEqual(parent.left, null);
@@ -23,7 +23,7 @@ test("BinarySearchNode", () => {
   assert.strictEqual(child.value, 7);
 });
 
-test("BinarySearchNode.from()", () => {
+test('BinarySearchNode.from()', () => {
   beforeEach();
   const parentClone: BinarySearchNode<number> = BinarySearchNode.from(parent);
   const childClone: BinarySearchNode<number> = BinarySearchNode.from(child);
@@ -39,17 +39,17 @@ test("BinarySearchNode.from()", () => {
   assert.strictEqual(childClone.value, 7);
 });
 
-test("BinarySearchNode.directionFromParent()", () => {
+test('BinarySearchNode.directionFromParent()', () => {
   beforeEach();
   const child2 = new BinarySearchNode(parent, 3);
   assert.strictEqual(child2.directionFromParent(), null);
   parent.left = child2;
-  assert.strictEqual(child2.directionFromParent(), "left");
+  assert.strictEqual(child2.directionFromParent(), 'left');
   assert.strictEqual(parent.directionFromParent(), null);
-  assert.strictEqual(child.directionFromParent(), "right");
+  assert.strictEqual(child.directionFromParent(), 'right');
 });
 
-test("BinarySearchNode.findMinNode()", () => {
+test('BinarySearchNode.findMinNode()', () => {
   beforeEach();
   assert.strictEqual(parent.findMinNode(), parent);
   const child2 = new BinarySearchNode(parent, 3);
@@ -63,7 +63,7 @@ test("BinarySearchNode.findMinNode()", () => {
   assert.strictEqual(parent.findMinNode(), child4);
 });
 
-test("BinarySearchNode.findMaxNode()", () => {
+test('BinarySearchNode.findMaxNode()', () => {
   beforeEach();
   assert.strictEqual(parent.findMaxNode(), child);
   const child2 = new BinarySearchNode(child, 6);
@@ -79,7 +79,7 @@ test("BinarySearchNode.findMaxNode()", () => {
   assert.strictEqual(parent.findMaxNode(), parent);
 });
 
-test("BinarySearchNode.findSuccessorNode()", () => {
+test('BinarySearchNode.findSuccessorNode()', () => {
   beforeEach();
   assert.strictEqual(parent.findSuccessorNode(), child);
   assert.strictEqual(child.findSuccessorNode(), null);

@@ -1,19 +1,17 @@
 import assert from 'node:assert/strict';
-import { BinaryHeap } from "./binary_heap.ts";
-import { ascend, descend } from "./comparators.ts";
-import { type Container, MyMath } from "./_test_utils.ts";
+import { BinaryHeap } from './binary_heap.ts';
+import { ascend, descend } from './comparators.ts';
+import { type Container, MyMath } from './_test_utils.ts';
 
-test("BinaryHeap throws if compare is not a function", () => {
-  assert.throws(
-    () => new BinaryHeap({} as (a: number, b: number) => number),
-    {
-      name: 'TypeError',
-      message: "Cannot construct a BinaryHeap: the 'compare' parameter is not a function, did you mean to call BinaryHeap.from?",
-    }
-  );
+test('BinaryHeap throws if compare is not a function', () => {
+  assert.throws(() => new BinaryHeap({} as (a: number, b: number) => number), {
+    name: 'TypeError',
+    message:
+      "Cannot construct a BinaryHeap: the 'compare' parameter is not a function, did you mean to call BinaryHeap.from?",
+  });
 });
 
-test("BinaryHeap works with default descend comparator", () => {
+test('BinaryHeap works with default descend comparator', () => {
   const maxHeap = new BinaryHeap<number>();
   const values: number[] = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const expected: number[] = [100, 10, 9, 9, 9, 1, 0, -1, -9, -10, -100];
@@ -50,7 +48,7 @@ test("BinaryHeap works with default descend comparator", () => {
   assert.deepStrictEqual(actual, expected);
 });
 
-test("BinaryHeap works with ascend comparator", () => {
+test('BinaryHeap works with ascend comparator', () => {
   const minHeap = new BinaryHeap<number>(ascend);
   const values: number[] = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const expected: number[] = [-100, -10, -9, -1, 0, 1, 9, 9, 9, 10, 100];
@@ -87,11 +85,10 @@ test("BinaryHeap works with ascend comparator", () => {
   assert.deepStrictEqual(actual, expected);
 });
 
-test("BinaryHeap contains objects", () => {
-  const heap = new BinaryHeap((
-    a: Container,
-    b: Container,
-  ) => ascend(a.id, b.id));
+test('BinaryHeap contains objects', () => {
+  const heap = new BinaryHeap((a: Container, b: Container) =>
+    ascend(a.id, b.id),
+  );
   const ids: number[] = [-10, 9, -1, 100, 1, 0, -100, 10, -9];
 
   for (const [i, id] of ids.entries()) {
@@ -119,7 +116,7 @@ test("BinaryHeap contains objects", () => {
   assert.strictEqual(heap.isEmpty(), true);
 });
 
-test("BinaryHeap.from() handles iterable", () => {
+test('BinaryHeap.from() handles iterable', () => {
   const values: number[] = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const originalValues: number[] = Array.from(values);
   const expected: number[] = [100, 10, 9, 9, 9, 1, 0, -1, -9, -10, -100];
@@ -134,7 +131,10 @@ test("BinaryHeap.from() handles iterable", () => {
   heap = BinaryHeap.from(values, {
     map: (v: number) => 2 * v,
   });
-  assert.deepStrictEqual([...heap], expected.map((v: number) => 2 * v));
+  assert.deepStrictEqual(
+    [...heap],
+    expected.map((v: number) => 2 * v),
+  );
 
   const math = new MyMath();
   heap = BinaryHeap.from(values, {
@@ -144,14 +144,20 @@ test("BinaryHeap.from() handles iterable", () => {
     thisArg: math,
   });
   assert.deepStrictEqual(values, originalValues);
-  assert.deepStrictEqual([...heap], expected.map((v: number) => 3 * v));
+  assert.deepStrictEqual(
+    [...heap],
+    expected.map((v: number) => 3 * v),
+  );
 
   heap = BinaryHeap.from(values, {
     compare: ascend,
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual(values, originalValues);
-  assert.deepStrictEqual([...heap].reverse(), expected.map((v: number) => 2 * v));
+  assert.deepStrictEqual(
+    [...heap].reverse(),
+    expected.map((v: number) => 2 * v),
+  );
 
   heap = BinaryHeap.from(values, {
     compare: ascend,
@@ -161,10 +167,13 @@ test("BinaryHeap.from() handles iterable", () => {
     thisArg: math,
   });
   assert.deepStrictEqual(values, originalValues);
-  assert.deepStrictEqual([...heap].reverse(), expected.map((v: number) => 3 * v));
+  assert.deepStrictEqual(
+    [...heap].reverse(),
+    expected.map((v: number) => 3 * v),
+  );
 });
 
-test("BinaryHeap.from() handles default descend comparator", () => {
+test('BinaryHeap.from() handles default descend comparator', () => {
   const values: number[] = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const expected: number[] = [100, 10, 9, 9, 9, 1, 0, -1, -9, -10, -100];
   const maxHeap = new BinaryHeap<number>();
@@ -183,7 +192,10 @@ test("BinaryHeap.from() handles default descend comparator", () => {
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...maxHeap], expected);
-  assert.deepStrictEqual([...heap], expected.map((v: number) => 2 * v));
+  assert.deepStrictEqual(
+    [...heap],
+    expected.map((v: number) => 2 * v),
+  );
 
   const math = new MyMath();
   maxHeap.push(...values);
@@ -194,7 +206,10 @@ test("BinaryHeap.from() handles default descend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...maxHeap], expected);
-  assert.deepStrictEqual([...heap], expected.map((v: number) => 3 * v));
+  assert.deepStrictEqual(
+    [...heap],
+    expected.map((v: number) => 3 * v),
+  );
 
   maxHeap.push(...values);
   heap = BinaryHeap.from(maxHeap, {
@@ -202,7 +217,10 @@ test("BinaryHeap.from() handles default descend comparator", () => {
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...maxHeap], expected);
-  assert.deepStrictEqual([...heap].reverse(), expected.map((v: number) => 2 * v));
+  assert.deepStrictEqual(
+    [...heap].reverse(),
+    expected.map((v: number) => 2 * v),
+  );
 
   maxHeap.push(...values);
   heap = BinaryHeap.from(maxHeap, {
@@ -213,10 +231,13 @@ test("BinaryHeap.from() handles default descend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...maxHeap], expected);
-  assert.deepStrictEqual([...heap].reverse(), expected.map((v: number) => 3 * v));
+  assert.deepStrictEqual(
+    [...heap].reverse(),
+    expected.map((v: number) => 3 * v),
+  );
 });
 
-test("BinaryHeap.from() handles ascend comparator", () => {
+test('BinaryHeap.from() handles ascend comparator', () => {
   const values: number[] = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const expected: number[] = [-100, -10, -9, -1, 0, 1, 9, 9, 9, 10, 100];
   const minHeap = new BinaryHeap<number>(ascend);
@@ -235,7 +256,10 @@ test("BinaryHeap.from() handles ascend comparator", () => {
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...minHeap], expected);
-  assert.deepStrictEqual([...heap], expected.map((v: number) => 2 * v));
+  assert.deepStrictEqual(
+    [...heap],
+    expected.map((v: number) => 2 * v),
+  );
 
   const math = new MyMath();
   minHeap.push(...values);
@@ -246,7 +270,10 @@ test("BinaryHeap.from() handles ascend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...minHeap], expected);
-  assert.deepStrictEqual([...heap], expected.map((v: number) => 3 * v));
+  assert.deepStrictEqual(
+    [...heap],
+    expected.map((v: number) => 3 * v),
+  );
 
   minHeap.push(...values);
   heap = BinaryHeap.from(minHeap, {
@@ -254,7 +281,10 @@ test("BinaryHeap.from() handles ascend comparator", () => {
     map: (v: number) => 2 * v,
   });
   assert.deepStrictEqual([...minHeap], expected);
-  assert.deepStrictEqual([...heap].reverse(), expected.map((v: number) => 2 * v));
+  assert.deepStrictEqual(
+    [...heap].reverse(),
+    expected.map((v: number) => 2 * v),
+  );
 
   minHeap.push(...values);
   heap = BinaryHeap.from(minHeap, {
@@ -265,10 +295,13 @@ test("BinaryHeap.from() handles ascend comparator", () => {
     thisArg: math,
   });
   assert.deepStrictEqual([...minHeap], expected);
-  assert.deepStrictEqual([...heap].reverse(), expected.map((v: number) => 3 * v));
+  assert.deepStrictEqual(
+    [...heap].reverse(),
+    expected.map((v: number) => 3 * v),
+  );
 });
 
-test("BinaryHeap handles edge case 1", () => {
+test('BinaryHeap handles edge case 1', () => {
   const minHeap = new BinaryHeap<number>(ascend);
   minHeap.push(4, 2, 8, 1, 10, 7, 3, 6, 5);
   assert.strictEqual(minHeap.pop(), 1);
@@ -278,7 +311,7 @@ test("BinaryHeap handles edge case 1", () => {
   assert.deepStrictEqual([...minHeap], expected);
 });
 
-test("BinaryHeap handles edge case 2", () => {
+test('BinaryHeap handles edge case 2', () => {
   interface Point {
     x: number;
     y: number;
@@ -286,11 +319,15 @@ test("BinaryHeap handles edge case 2", () => {
   const minHeap = new BinaryHeap<Point>((a, b) => ascend(a.x, b.x));
   minHeap.push({ x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 });
 
-  const expected = [{ x: 0, y: 1 }, { x: 0, y: 3 }, { x: 0, y: 2 }];
+  const expected = [
+    { x: 0, y: 1 },
+    { x: 0, y: 3 },
+    { x: 0, y: 2 },
+  ];
   assert.deepStrictEqual([...minHeap], expected);
 });
 
-test("BinaryHeap handles edge case 3", () => {
+test('BinaryHeap handles edge case 3', () => {
   interface Point {
     x: number;
     y: number;
@@ -318,7 +355,7 @@ test("BinaryHeap handles edge case 3", () => {
   assert.deepStrictEqual([...minHeap], expected);
 });
 
-test("BinaryHeap handles README example", () => {
+test('BinaryHeap handles README example', () => {
   const maxHeap = new BinaryHeap<number>();
   maxHeap.push(4, 1, 3, 5, 2);
   assert.strictEqual(maxHeap.peek(), 5);
@@ -334,21 +371,21 @@ test("BinaryHeap handles README example", () => {
   assert.deepStrictEqual([...minHeap], []);
 
   const words = new BinaryHeap<string>((a, b) => descend(a.length, b.length));
-  words.push("truck", "car", "helicopter", "tank");
-  assert.strictEqual(words.peek(), "helicopter");
-  assert.strictEqual(words.pop(), "helicopter");
-  assert.deepStrictEqual([...words], ["truck", "tank", "car"]);
+  words.push('truck', 'car', 'helicopter', 'tank');
+  assert.strictEqual(words.peek(), 'helicopter');
+  assert.strictEqual(words.pop(), 'helicopter');
+  assert.deepStrictEqual([...words], ['truck', 'tank', 'car']);
   assert.deepStrictEqual([...words], []);
 });
 
-test("BinaryHeap.toArray()", () => {
+test('BinaryHeap.toArray()', () => {
   const values = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const maxHeap = new BinaryHeap<number>();
   maxHeap.push(...values);
   assert(maxHeap.toArray().every((value) => values.includes(value)));
 });
 
-test("BinaryHeap.drain()", () => {
+test('BinaryHeap.drain()', () => {
   const values = [2, 4, 3, 5, 1];
   const expected = [5, 4, 3, 2, 1];
   const heap = new BinaryHeap<number>();
@@ -357,7 +394,7 @@ test("BinaryHeap.drain()", () => {
   assert.strictEqual(heap.length, 0);
 });
 
-test("BinaryHeap drain copy", () => {
+test('BinaryHeap drain copy', () => {
   const values = [2, 4, 3, 5, 1];
   const expected = [5, 4, 3, 2, 1];
   const heap = new BinaryHeap<number>();
@@ -367,7 +404,7 @@ test("BinaryHeap drain copy", () => {
   assert.strictEqual(heap.length, 5);
 });
 
-test("BinaryHeap.clear()", () => {
+test('BinaryHeap.clear()', () => {
   const values = [-10, 9, -1, 100, 9, 1, 0, 9, -100, 10, -9];
   const maxHeap = new BinaryHeap<number>();
   maxHeap.push(...values);

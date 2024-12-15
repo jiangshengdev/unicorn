@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
-import { RedBlackNode } from "./_red_black_node.ts";
+import { RedBlackNode } from './_red_black_node.ts';
 
-test("RedBlackNode", () => {
+test('RedBlackNode', () => {
   const parent: RedBlackNode<number> = new RedBlackNode(null, 5);
   const child: RedBlackNode<number> = new RedBlackNode(parent, 7);
   parent.left = child;
@@ -21,7 +21,7 @@ test("RedBlackNode", () => {
   assert.strictEqual(child.red, true);
 });
 
-test("RedBlackNode.from()", () => {
+test('RedBlackNode.from()', () => {
   const parent: RedBlackNode<number> = new RedBlackNode(null, 5);
   const child: RedBlackNode<number> = new RedBlackNode(parent, 7);
   parent.left = child;
