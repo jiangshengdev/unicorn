@@ -470,7 +470,6 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * @param value 要插入到二叉搜索树中的值。
    * @returns 如果值被插入，则返回 `true`；如果值已存在于树中，则返回 `false`。
    */
-  // 插入值到二叉搜索树中
   insert(value: T): boolean {
     // 调用内部方法插入节点
     return !!this.#insertNode(BinarySearchNode, value);
@@ -495,7 +494,6 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * @param value 要从二叉搜索树中移除的值。
    * @returns 如果找到并移除该值，则返回 `true`；如果未在树中找到该值，则返回 `false`。
    */
-  // 从二叉搜索树中移除值
   remove(value: T): boolean {
     // 查找要移除的节点
     const node: BinarySearchNode<T> | null = this.#findNode(value);
@@ -547,7 +545,6 @@ export class BinarySearchTree<T> implements Iterable<T> {
    *
    * @returns 二叉搜索树中的最小值，或者如果树为空则返回 `null`。
    */
-  // 获取树中最小的值
   min(): T | null {
     // 如果根节点存在，返回最小节点的值
     return this.#root ? this.#root.findMinNode().value : null;
@@ -570,7 +567,6 @@ export class BinarySearchTree<T> implements Iterable<T> {
    *
    * @returns 二叉搜索树中的最大值，或者如果树为空则返回 `null`。
    */
-  // 获取树中最大的值
   max(): T | null {
     // 如果根节点存在，返回最大节点的值
     return this.#root ? this.#root.findMaxNode().value : null;
@@ -593,7 +589,6 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals(tree.find(42), null);
    * ```
    */
-  // 清空二叉搜索树
   clear() {
     // 设置根节点为 null
     this.#root = null;
@@ -623,7 +618,6 @@ export class BinarySearchTree<T> implements Iterable<T> {
    *
    * @returns 如果二叉搜索树为空，则返回 `true`；否则返回 `false`。
    */
-  // 检查二叉搜索树是否为空
   isEmpty(): boolean {
     // 返回大小是否为 0
     return this.size === 0;
@@ -644,7 +638,6 @@ export class BinarySearchTree<T> implements Iterable<T> {
    *
    * @returns 一个按中序遍历（LNR）遍历树的迭代器。
    */
-  // 中序遍历（左-节点-右）生成迭代器
   *lnrValues(): IterableIterator<T> {
     // 创建栈存储节点
     const nodes: BinarySearchNode<T>[] = [];
@@ -802,7 +795,6 @@ export class BinarySearchTree<T> implements Iterable<T> {
    *
    * @returns 一个按中序遍历（LNR）遍历树的迭代器。
    */
-  // 迭代器方法，默认使用中序遍历
   *[Symbol.iterator](): IterableIterator<T> {
     // 使用中序遍历返回值的迭代器
     yield* this.lnrValues();

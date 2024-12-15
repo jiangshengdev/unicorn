@@ -365,7 +365,6 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
    * @param value 要插入到树中的值。
    * @returns 如果值被插入，返回 `true`；如果值已存在于树中，返回 `false`。
    */
-  // 重写插入方法，插入新值到红黑树中
   override insert(value: T): boolean {
     // 调用父类的插入方法，返回插入的节点
     let node = insertNode(this, RedBlackNode, value) as RedBlackNode<T> | null;
@@ -437,7 +436,6 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
    * @param value 要从树中移除的值。
    * @returns 如果找到并移除该值，返回 `true`；如果未找到该值，返回 `false`。
    */
-  // 重写删除方法，从红黑树中移除指定的值
   override remove(value: T): boolean {
     // 查找要删除的节点
     const node = findNode(this, value) as RedBlackNode<T> | null;
