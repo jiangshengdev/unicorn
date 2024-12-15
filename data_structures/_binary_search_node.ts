@@ -21,9 +21,13 @@ export class BinarySearchNode<T> {
    * @param value 节点存储的值。
    */
   constructor(parent: BinarySearchNode<T> | null, value: T) {
+    // 初始化左子节点为空
     this.left = null;
+    // 初始化右子节点为空
     this.right = null;
+    // 设置父节点
     this.parent = parent;
+    // 设置节点值
     this.value = value;
   }
 
@@ -34,11 +38,14 @@ export class BinarySearchNode<T> {
    * @returns 新创建的节点副本。
    */
   static from<T>(node: BinarySearchNode<T>): BinarySearchNode<T> {
+    // 创建新节点副本，设置父节点和值
     const copy: BinarySearchNode<T> = new BinarySearchNode(
       node.parent,
       node.value,
     );
+    // 复制左子节点
     copy.left = node.left;
+    // 复制右子节点
     copy.right = node.right;
     return copy;
   }
@@ -49,13 +56,12 @@ export class BinarySearchNode<T> {
    * @returns 如果当前节点是父节点的左子节点，返回 `'left'`；如果是右子节点，返回 `'right'`；否则返回 `null`。
    */
   directionFromParent(): Direction | null {
-    return this.parent === null
-      ? null
-      : this === this.parent.left
-        ? 'left'
-        : this === this.parent.right
-          ? 'right'
-          : null;
+    // 检查是否有父节点
+    if (this.parent === null) return null;
+    // 当前节点是父节点的左子节点
+    if (this === this.parent.left) return 'left';
+    // 当前节点是父节点的右子节点
+    return 'right';
   }
 
   /**
@@ -64,8 +70,14 @@ export class BinarySearchNode<T> {
    * @returns 包含最小值的节点。
    */
   findMinNode(): BinarySearchNode<T> {
+    // 从左子节点开始，寻找最小节点
     let minNode: BinarySearchNode<T> | null = this.left;
-    while (minNode?.left) minNode = minNode.left;
+    // 循环直到找到最左边的节点
+    while (minNode?.left) {
+      // 继续向左查找
+      minNode = minNode.left;
+    }
+    // 如果没有更左的节点，则返回当前节点
     return minNode ?? this;
   }
 
@@ -75,8 +87,14 @@ export class BinarySearchNode<T> {
    * @returns 包含最大值的节点。
    */
   findMaxNode(): BinarySearchNode<T> {
+    // 从右子节点开始，寻找最大节点
     let maxNode: BinarySearchNode<T> | null = this.right;
-    while (maxNode?.right) maxNode = maxNode.right;
+    // 循环直到找到最右边的节点
+    while (maxNode?.right) {
+      // 继续向右查找
+      maxNode = maxNode.right;
+    }
+    // 如果没有更右的节点，则返回当前节点
     return maxNode ?? this;
   }
 
@@ -86,13 +104,17 @@ export class BinarySearchNode<T> {
    * @returns 后继节点，如果不存在则返回 `null`。
    */
   findSuccessorNode(): BinarySearchNode<T> | null {
+    // 如果有右子节点，后继节点是右子树的最小节点
     if (this.right !== null) return this.right.findMinNode();
+    // 否则，向上遍历父节点，找到第一个当前节点是其左子节点的父节点
     let parent: BinarySearchNode<T> | null = this.parent;
     let direction: Direction | null = this.directionFromParent();
     while (parent && direction === 'right') {
+      // 更新方向和父节点
       direction = parent.directionFromParent();
       parent = parent.parent;
     }
+    // 返回找到的父节点作为后继节点
     return parent;
   }
 }

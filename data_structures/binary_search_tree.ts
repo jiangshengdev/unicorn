@@ -104,6 +104,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * 默认情况下，值按升序排序。
    */
   constructor(compare: (a: T, b: T) => number = ascend) {
+    // 确保比较函数是一个有效的函数
     if (typeof compare !== 'function') {
       throw new TypeError(
         "Cannot construct a BinarySearchTree: the 'compare' parameter is not a function, did you mean to call BinarySearchTree.from?",
@@ -237,16 +238,20 @@ export class BinarySearchTree<T> implements Iterable<T> {
       thisArg?: V;
     },
   ): BinarySearchTree<U> {
+    // 创建新的二叉搜索树实例
     let result: BinarySearchTree<U>;
     let unmappedValues: ArrayLike<T> | Iterable<T> = [];
     if (collection instanceof BinarySearchTree) {
+      // 从现有树复制比较函数
       result = new BinarySearchTree(
         options?.compare ??
           (collection as unknown as BinarySearchTree<U>).#compare,
       );
       if (options?.compare || options?.map) {
+        // 如果提供了自定义比较函数或映射函数，使用原始集合
         unmappedValues = collection;
       } else {
+        // 复制现有树的节点结构
         const nodes: BinarySearchNode<U>[] = [];
         if (collection.#root) {
           result.#root = BinarySearchNode.from(
@@ -274,6 +279,7 @@ export class BinarySearchTree<T> implements Iterable<T> {
         }
       }
     } else {
+      // 使用自定义比较函数或默认比较函数创建新树
       result = (
         options?.compare
           ? new BinarySearchTree(options.compare)
@@ -281,9 +287,11 @@ export class BinarySearchTree<T> implements Iterable<T> {
       ) as BinarySearchTree<U>;
       unmappedValues = collection;
     }
+    // 如果提供了映射函数，则映射值
     const values: Iterable<U> = options?.map
       ? Array.from(unmappedValues, options.map, options.thisArg)
       : (unmappedValues as U[]);
+    // 插入所有值到新树中
     for (const value of values) result.insert(value);
     return result;
   }
@@ -309,91 +317,136 @@ export class BinarySearchTree<T> implements Iterable<T> {
     return this.#size;
   }
 
+  // 查找给定值对应的节点
   #findNode(value: T): BinarySearchNode<T> | null {
+    // 从根节点开始查找
     let node: BinarySearchNode<T> | null = this.#root;
+
+    // 当节点不为空时，继续遍历
     while (node) {
+      // 比较目标值与当前节点的值
       const order: number = this.#compare(value as T, node.value);
+
+      // 如果找到目标值，结束循环
       if (order === 0) break;
+
+      // 确定下一步搜索的方向
       const direction: 'left' | 'right' = order < 0 ? 'left' : 'right';
+
+      // 移动到子节点继续查找
       node = node[direction];
     }
+
+    // 返回找到的节点，可能为 null
     return node;
   }
 
+  // 旋转节点，使子节点成为新的父节点
   #rotateNode(node: BinarySearchNode<T>, direction: Direction) {
+    // 确定旋转方向的反方向
     const replacementDirection: Direction =
       direction === 'left' ? 'right' : 'left';
+
+    // 如果没有子节点，无法旋转
     if (!node[replacementDirection]) {
       throw new TypeError(
         `Cannot rotate ${direction} without ${replacementDirection} child`,
       );
     }
+
+    // 获取替代的子节点
     const replacement: BinarySearchNode<T> = node[replacementDirection]!;
+
+    // 更新当前节点的子节点
     node[replacementDirection] = replacement[direction] ?? null;
     if (replacement[direction]) replacement[direction]!.parent = node;
+
+    // 更新替代节点的父节点
     replacement.parent = node.parent;
     if (node.parent) {
+      // 更新父节点的子节点引用
       const parentDirection: Direction =
         node === node.parent[direction] ? direction : replacementDirection;
       node.parent[parentDirection] = replacement;
     } else {
+      // 如果没有父节点，更新根节点
       this.#root = replacement;
     }
+
+    // 将当前节点设置为替代节点的子节点
     replacement[direction] = node;
     node.parent = replacement;
   }
 
+  // 插入新节点到树中
   #insertNode(
     Node: typeof BinarySearchNode,
     value: T,
   ): BinarySearchNode<T> | null {
+    // 如果树为空，创建根节点
     if (!this.#root) {
       this.#root = new Node(null, value);
       this.#size++;
       return this.#root;
     } else {
+      // 从根节点开始遍历
       let node: BinarySearchNode<T> = this.#root;
+
       while (true) {
+        // 比较新值与当前节点的值
         const order: number = this.#compare(value, node.value);
+
+        // 如果值相等，结束循环
         if (order === 0) break;
+
+        // 确定要移动的方向
         const direction: Direction = order < 0 ? 'left' : 'right';
+
+        // 如果子节点存在，继续遍历
         if (node[direction]) {
           node = node[direction]!;
         } else {
+          // 如果子节点不存在，插入新节点
           node[direction] = new Node(node, value);
           this.#size++;
           return node[direction];
         }
       }
     }
+
+    // 如果值已存在于树中，返回 null
     return null;
   }
 
-  /** 移除给定节点，并返回物理上从树中移除的节点。 */
+  // 移除指定的节点
   #removeNode(node: BinarySearchNode<T>): BinarySearchNode<T> | null {
-    /**
-     * 要从树中物理移除的节点。
-     * 保证最多只有一个子节点。
-     */
+    // 确定要删除的节点
     const flaggedNode: BinarySearchNode<T> | null =
       !node.left || !node.right ? node : node.findSuccessorNode()!;
-    /** 替换标记节点的节点。 */
+
+    // 获取替代节点（子节点或 null）
     const replacementNode: BinarySearchNode<T> | null =
       flaggedNode.left ?? flaggedNode.right;
 
+    // 更新替代节点的父节点引用
     if (replacementNode) replacementNode.parent = flaggedNode.parent;
+
     if (!flaggedNode.parent) {
+      // 如果删除的是根节点，更新根节点
       this.#root = replacementNode;
     } else {
+      // 更新父节点的子节点引用
       flaggedNode.parent[flaggedNode.directionFromParent()!] = replacementNode;
     }
+
     if (flaggedNode !== node) {
-      /** 交换值，以防移除的节点的值仍然被消费者需要。 */
+      // 如果被删除节点有两个子节点，交换值
       const swapValue = node.value;
       node.value = flaggedNode.value;
       flaggedNode.value = swapValue;
     }
 
+    // 更新树的节点数量
     this.#size--;
     return flaggedNode;
   }
@@ -417,7 +470,9 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * @param value 要插入到二叉搜索树中的值。
    * @returns 如果值被插入，则返回 `true`；如果值已存在于树中，则返回 `false`。
    */
+  // 插入值到二叉搜索树中
   insert(value: T): boolean {
+    // 调用内部方法插入节点
     return !!this.#insertNode(BinarySearchNode, value);
   }
 
@@ -440,9 +495,15 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * @param value 要从二叉搜索树中移除的值。
    * @returns 如果找到并移除该值，则返回 `true`；如果未在树中找到该值，则返回 `false`。
    */
+  // 从二叉搜索树中移除值
   remove(value: T): boolean {
+    // 查找要移除的节点
     const node: BinarySearchNode<T> | null = this.#findNode(value);
+
+    // 如果节点存在，移除节点
     if (node) this.#removeNode(node);
+
+    // 返回是否成功移除
     return node !== null;
   }
 
@@ -486,7 +547,9 @@ export class BinarySearchTree<T> implements Iterable<T> {
    *
    * @returns 二叉搜索树中的最小值，或者如果树为空则返回 `null`。
    */
+  // 获取树中最小的值
   min(): T | null {
+    // 如果根节点存在，返回最小节点的值
     return this.#root ? this.#root.findMinNode().value : null;
   }
 
@@ -507,7 +570,9 @@ export class BinarySearchTree<T> implements Iterable<T> {
    *
    * @returns 二叉搜索树中的最大值，或者如果树为空则返回 `null`。
    */
+  // 获取树中最大的值
   max(): T | null {
+    // 如果根节点存在，返回最大节点的值
     return this.#root ? this.#root.findMaxNode().value : null;
   }
 
@@ -528,8 +593,12 @@ export class BinarySearchTree<T> implements Iterable<T> {
    * assertEquals(tree.find(42), null);
    * ```
    */
+  // 清空二叉搜索树
   clear() {
+    // 设置根节点为 null
     this.#root = null;
+
+    // 重置大小为 0
     this.#size = 0;
   }
 
@@ -554,7 +623,9 @@ export class BinarySearchTree<T> implements Iterable<T> {
    *
    * @returns 如果二叉搜索树为空，则返回 `true`；否则返回 `false`。
    */
+  // 检查二叉搜索树是否为空
   isEmpty(): boolean {
+    // 返回大小是否为 0
     return this.size === 0;
   }
 
@@ -573,16 +644,26 @@ export class BinarySearchTree<T> implements Iterable<T> {
    *
    * @returns 一个按中序遍历（LNR）遍历树的迭代器。
    */
+  // 中序遍历（左-节点-右）生成迭代器
   *lnrValues(): IterableIterator<T> {
+    // 创建栈存储节点
     const nodes: BinarySearchNode<T>[] = [];
+
+    // 从根节点开始
     let node: BinarySearchNode<T> | null = this.#root;
+
+    // 当栈不为空或节点存在时循环
     while (nodes.length || node) {
       if (node) {
+        // 将左子节点压入栈
         nodes.push(node);
         node = node.left;
       } else {
+        // 弹出节点并访问其值
         node = nodes.pop()!;
         yield node.value;
+
+        // 移动到右子节点
         node = node.right;
       }
     }
@@ -721,7 +802,9 @@ export class BinarySearchTree<T> implements Iterable<T> {
    *
    * @returns 一个按中序遍历（LNR）遍历树的迭代器。
    */
+  // 迭代器方法，默认使用中序遍历
   *[Symbol.iterator](): IterableIterator<T> {
+    // 使用中序遍历返回值的迭代器
     yield* this.lnrValues();
   }
 }
