@@ -434,6 +434,7 @@ test('BinarySearchTree.from() handles default ascend comparator', () => {
   let tree: BinarySearchTree<number> = BinarySearchTree.from(originalTree);
   assert.deepStrictEqual([...originalTree], expected);
   assert.deepStrictEqual([...tree], expected);
+  assert.deepStrictEqual(tree.size, originalTree.size);
   assert.deepStrictEqual([...tree.nlrValues()], [...originalTree.nlrValues()]);
   assert.deepStrictEqual([...tree.lvlValues()], [...originalTree.lvlValues()]);
 
@@ -497,6 +498,7 @@ test('BinarySearchTree.from() handles descend comparator', () => {
   let tree: BinarySearchTree<number> = BinarySearchTree.from(originalTree);
   assert.deepStrictEqual([...originalTree], expected);
   assert.deepStrictEqual([...tree], expected);
+  assert.deepStrictEqual(tree.size, originalTree.size);
   assert.deepStrictEqual([...tree.nlrValues()], [...originalTree.nlrValues()]);
   assert.deepStrictEqual([...tree.lvlValues()], [...originalTree.lvlValues()]);
 
