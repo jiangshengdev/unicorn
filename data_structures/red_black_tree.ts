@@ -14,6 +14,7 @@ const {
   rotateNode,
   insertNode,
   removeNode,
+  setSize,
 } = internals;
 
 /**
@@ -258,6 +259,8 @@ export class RedBlackTree<T> extends BinarySearchTree<T> {
           }
         }
       }
+      // 设置红黑树的大小
+      setSize(result, collection.size);
     } else {
       // 如果传入的集合不是红黑树实例
       // 使用提供的比较函数或默认的比较函数创建新的红黑树

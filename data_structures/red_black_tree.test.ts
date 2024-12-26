@@ -423,6 +423,7 @@ test('RedBlackTree.from() handles default ascend comparator', () => {
   assert.deepStrictEqual([...tree], expected);
   assert.deepStrictEqual([...tree.nlrValues()], [...originalTree.nlrValues()]);
   assert.deepStrictEqual([...tree.lvlValues()], [...originalTree.lvlValues()]);
+  assert.deepStrictEqual(originalTree.size, tree.size);
 
   tree = RedBlackTree.from(originalTree, { compare: descend });
   assert.deepStrictEqual([...originalTree], expected);
@@ -524,6 +525,7 @@ test('RedBlackTree.from() handles descend comparator', () => {
   assert.deepStrictEqual([...tree], expected);
   assert.deepStrictEqual([...tree.nlrValues()], [...originalTree.nlrValues()]);
   assert.deepStrictEqual([...tree.lvlValues()], [...originalTree.lvlValues()]);
+  assert.deepStrictEqual(originalTree.size, tree.size);
 
   tree = RedBlackTree.from(originalTree, { compare: ascend });
   assert.deepStrictEqual([...originalTree], expected);

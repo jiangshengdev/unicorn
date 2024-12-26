@@ -97,4 +97,13 @@ export const internals: {
     tree: BinarySearchTree<T>,
     node: BinarySearchNode<T>,
   ): BinarySearchNode<T> | null;
+
+  /**
+   * 设置二叉搜索树的大小。
+   *
+   * @typeparam T 节点存储的值的类型。
+   * @param tree 二叉搜索树实例。
+   * @param size 要设置的大小。
+   */
+  setSize<T>(tree: BinarySearchTree<T>, size: number): void;
 } = {} as typeof internals;
