@@ -323,6 +323,7 @@ test('RedBlackTree.from() handles Iterable', () => {
     [...tree.lvlValues()],
     [-1, -10, 9, -100, -9, 1, 100, 0, 10],
   );
+  assert.deepStrictEqual(tree.size, expected.length);
 
   tree = RedBlackTree.from(values, { compare: descend });
   assert.deepStrictEqual(values, originalValues);
@@ -335,6 +336,7 @@ test('RedBlackTree.from() handles Iterable', () => {
     [...tree.lvlValues()],
     [-1, 9, -10, 100, 1, -9, -100, 10, 0],
   );
+  assert.deepStrictEqual(tree.size, expected.length);
 
   tree = RedBlackTree.from(values, {
     map: (v: number) => 2 * v,
@@ -351,6 +353,7 @@ test('RedBlackTree.from() handles Iterable', () => {
     [...tree.lvlValues()],
     [-2, -20, 18, -200, -18, 2, 200, 0, 20],
   );
+  assert.deepStrictEqual(tree.size, expected.length);
 
   const math = new MyMath();
   tree = RedBlackTree.from(values, {
@@ -372,6 +375,7 @@ test('RedBlackTree.from() handles Iterable', () => {
     [...tree.lvlValues()],
     [-3, -30, 27, -300, -27, 3, 300, 0, 30],
   );
+  assert.deepStrictEqual(tree.size, expected.length);
 
   tree = RedBlackTree.from(values, {
     compare: descend,
@@ -390,6 +394,7 @@ test('RedBlackTree.from() handles Iterable', () => {
     [...tree.lvlValues()],
     [-2, 18, -20, 200, 2, -18, -200, 20, 0],
   );
+  assert.deepStrictEqual(tree.size, expected.length);
 
   tree = RedBlackTree.from(values, {
     compare: descend,
@@ -411,6 +416,7 @@ test('RedBlackTree.from() handles Iterable', () => {
     [...tree.lvlValues()],
     [-3, 27, -30, 300, 3, -27, -300, 30, 0],
   );
+  assert.deepStrictEqual(tree.size, expected.length);
 });
 
 test('RedBlackTree.from() handles default ascend comparator', () => {
@@ -436,6 +442,7 @@ test('RedBlackTree.from() handles default ascend comparator', () => {
     [...tree.lvlValues()],
     [-1, 1, -10, 10, 0, -9, -100, 100, 9],
   );
+  assert.deepStrictEqual(originalTree.size, tree.size);
 
   tree = RedBlackTree.from(originalTree, {
     map: (v: number) => 2 * v,
@@ -453,6 +460,7 @@ test('RedBlackTree.from() handles default ascend comparator', () => {
     [...tree.lvlValues()],
     [-2, -20, 2, -200, -18, 0, 20, 18, 200],
   );
+  assert.deepStrictEqual(originalTree.size, tree.size);
 
   const math = new MyMath();
   tree = RedBlackTree.from(originalTree, {
@@ -474,6 +482,7 @@ test('RedBlackTree.from() handles default ascend comparator', () => {
     [...tree.lvlValues()],
     [-3, -30, 3, -300, -27, 0, 30, 27, 300],
   );
+  assert.deepStrictEqual(originalTree.size, tree.size);
 
   tree = RedBlackTree.from(originalTree, {
     compare: descend,
@@ -492,6 +501,7 @@ test('RedBlackTree.from() handles default ascend comparator', () => {
     [...tree.lvlValues()],
     [-2, 2, -20, 20, 0, -18, -200, 200, 18],
   );
+  assert.deepStrictEqual(originalTree.size, tree.size);
 
   tree = RedBlackTree.from(originalTree, {
     compare: descend,
@@ -513,6 +523,7 @@ test('RedBlackTree.from() handles default ascend comparator', () => {
     [...tree.lvlValues()],
     [-3, 3, -30, 30, 0, -27, -300, 300, 27],
   );
+  assert.deepStrictEqual(originalTree.size, tree.size);
 });
 
 test('RedBlackTree.from() handles descend comparator', () => {
@@ -538,6 +549,7 @@ test('RedBlackTree.from() handles descend comparator', () => {
     [...tree.lvlValues()],
     [1, -1, 10, -10, 0, 9, 100, -100, -9],
   );
+  assert.deepStrictEqual(originalTree.size, tree.size);
 
   tree = RedBlackTree.from(originalTree, {
     map: (v: number) => 2 * v,
@@ -555,6 +567,7 @@ test('RedBlackTree.from() handles descend comparator', () => {
     [...tree.lvlValues()],
     [2, 20, -2, 200, 18, 0, -20, -18, -200],
   );
+  assert.deepStrictEqual(originalTree.size, tree.size);
 
   const math = new MyMath();
   tree = RedBlackTree.from(originalTree, {
@@ -576,6 +589,7 @@ test('RedBlackTree.from() handles descend comparator', () => {
     [...tree.lvlValues()],
     [3, 30, -3, 300, 27, 0, -30, -27, -300],
   );
+  assert.deepStrictEqual(originalTree.size, tree.size);
 
   tree = RedBlackTree.from(originalTree, {
     compare: ascend,
@@ -594,6 +608,7 @@ test('RedBlackTree.from() handles descend comparator', () => {
     [...tree.lvlValues()],
     [2, -2, 20, -20, 0, 18, 200, -200, -18],
   );
+  assert.deepStrictEqual(originalTree.size, tree.size);
 
   tree = RedBlackTree.from(originalTree, {
     compare: ascend,
@@ -615,6 +630,7 @@ test('RedBlackTree.from() handles descend comparator', () => {
     [...tree.lvlValues()],
     [3, -3, 30, -30, 0, 27, 300, -300, -27],
   );
+  assert.deepStrictEqual(originalTree.size, tree.size);
 });
 
 test('RedBlackTree() inserts rebalance left', () => {
