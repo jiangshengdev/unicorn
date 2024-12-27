@@ -328,6 +328,7 @@ test('BinarySearchTree.from() handles iterable', () => {
   let tree: BinarySearchTree<number> = BinarySearchTree.from(values);
   assert.deepStrictEqual(values, originalValues);
   assert.deepStrictEqual([...tree], expected);
+  assert.strictEqual(tree.size, expected.length);
   assert.deepStrictEqual(
     [...tree.nlrValues()],
     [-10, -100, 9, -1, -9, 1, 0, 100, 10],
@@ -340,6 +341,7 @@ test('BinarySearchTree.from() handles iterable', () => {
   tree = BinarySearchTree.from(values, { compare: descend });
   assert.deepStrictEqual(values, originalValues);
   assert.deepStrictEqual([...tree].reverse(), expected);
+  assert.strictEqual(tree.size, expected.length);
   assert.deepStrictEqual(
     [...tree.nlrValues()],
     [-10, 9, 100, 10, -1, 1, 0, -9, -100],
@@ -356,6 +358,7 @@ test('BinarySearchTree.from() handles iterable', () => {
     [...tree],
     expected.map((v: number) => 2 * v),
   );
+  assert.strictEqual(tree.size, expected.length);
   assert.deepStrictEqual(
     [...tree.nlrValues()],
     [-20, -200, 18, -2, -18, 2, 0, 200, 20],
@@ -377,6 +380,7 @@ test('BinarySearchTree.from() handles iterable', () => {
     [...tree],
     expected.map((v: number) => 3 * v),
   );
+  assert.strictEqual(tree.size, expected.length);
   assert.deepStrictEqual(
     [...tree.nlrValues()],
     [-30, -300, 27, -3, -27, 3, 0, 300, 30],
@@ -395,6 +399,7 @@ test('BinarySearchTree.from() handles iterable', () => {
     [...tree].reverse(),
     expected.map((v: number) => 2 * v),
   );
+  assert.strictEqual(tree.size, expected.length);
   assert.deepStrictEqual(
     [...tree.nlrValues()],
     [-20, 18, 200, 20, -2, 2, 0, -18, -200],
@@ -416,6 +421,7 @@ test('BinarySearchTree.from() handles iterable', () => {
     [...tree].reverse(),
     expected.map((v: number) => 3 * v),
   );
+  assert.strictEqual(tree.size, expected.length);
   assert.deepStrictEqual(
     [...tree.nlrValues()],
     [-30, 27, 300, 30, -3, 3, 0, -27, -300],
@@ -435,12 +441,14 @@ test('BinarySearchTree.from() handles default ascend comparator', () => {
   assert.deepStrictEqual([...originalTree], expected);
   assert.deepStrictEqual([...tree], expected);
   assert.deepStrictEqual(tree.size, originalTree.size);
+  assert.strictEqual(tree.size, originalTree.size);
   assert.deepStrictEqual([...tree.nlrValues()], [...originalTree.nlrValues()]);
   assert.deepStrictEqual([...tree.lvlValues()], [...originalTree.lvlValues()]);
 
   tree = BinarySearchTree.from(originalTree, { compare: descend });
   assert.deepStrictEqual([...originalTree], expected);
   assert.deepStrictEqual([...tree].reverse(), expected);
+  assert.strictEqual(tree.size, originalTree.size);
   assert.deepStrictEqual([...tree.nlrValues()], expected);
   assert.deepStrictEqual([...tree.lvlValues()], expected);
 
@@ -452,6 +460,7 @@ test('BinarySearchTree.from() handles default ascend comparator', () => {
     [...tree],
     expected.map((v: number) => 2 * v),
   );
+  assert.strictEqual(tree.size, originalTree.size);
 
   const math = new MyMath();
   tree = BinarySearchTree.from(originalTree, {
@@ -465,6 +474,7 @@ test('BinarySearchTree.from() handles default ascend comparator', () => {
     [...tree],
     expected.map((v: number) => 3 * v),
   );
+  assert.strictEqual(tree.size, originalTree.size);
 
   tree = BinarySearchTree.from(originalTree, {
     compare: descend,
@@ -475,6 +485,7 @@ test('BinarySearchTree.from() handles default ascend comparator', () => {
     [...tree].reverse(),
     expected.map((v: number) => 2 * v),
   );
+  assert.strictEqual(tree.size, originalTree.size);
 
   tree = BinarySearchTree.from(originalTree, {
     compare: descend,
@@ -488,6 +499,7 @@ test('BinarySearchTree.from() handles default ascend comparator', () => {
     [...tree].reverse(),
     expected.map((v: number) => 3 * v),
   );
+  assert.strictEqual(tree.size, originalTree.size);
 });
 
 test('BinarySearchTree.from() handles descend comparator', () => {
@@ -499,12 +511,14 @@ test('BinarySearchTree.from() handles descend comparator', () => {
   assert.deepStrictEqual([...originalTree], expected);
   assert.deepStrictEqual([...tree], expected);
   assert.deepStrictEqual(tree.size, originalTree.size);
+  assert.strictEqual(tree.size, originalTree.size);
   assert.deepStrictEqual([...tree.nlrValues()], [...originalTree.nlrValues()]);
   assert.deepStrictEqual([...tree.lvlValues()], [...originalTree.lvlValues()]);
 
   tree = BinarySearchTree.from(originalTree, { compare: ascend });
   assert.deepStrictEqual([...originalTree], expected);
   assert.deepStrictEqual([...tree].reverse(), expected);
+  assert.strictEqual(tree.size, originalTree.size);
   assert.deepStrictEqual([...tree.nlrValues()], expected);
   assert.deepStrictEqual([...tree.lvlValues()], expected);
 
@@ -516,6 +530,7 @@ test('BinarySearchTree.from() handles descend comparator', () => {
     [...tree],
     expected.map((v: number) => 2 * v),
   );
+  assert.strictEqual(tree.size, originalTree.size);
 
   const math = new MyMath();
   tree = BinarySearchTree.from(originalTree, {
@@ -529,6 +544,7 @@ test('BinarySearchTree.from() handles descend comparator', () => {
     [...tree],
     expected.map((v: number) => 3 * v),
   );
+  assert.strictEqual(tree.size, originalTree.size);
 
   tree = BinarySearchTree.from(originalTree, {
     compare: ascend,
@@ -539,6 +555,7 @@ test('BinarySearchTree.from() handles descend comparator', () => {
     [...tree].reverse(),
     expected.map((v: number) => 2 * v),
   );
+  assert.strictEqual(tree.size, originalTree.size);
 
   tree = BinarySearchTree.from(originalTree, {
     compare: ascend,
@@ -552,6 +569,7 @@ test('BinarySearchTree.from() handles descend comparator', () => {
     [...tree].reverse(),
     expected.map((v: number) => 3 * v),
   );
+  assert.strictEqual(tree.size, originalTree.size);
 });
 
 test('BinarySearchTree handles README example', () => {
