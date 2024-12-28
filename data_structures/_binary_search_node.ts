@@ -19,19 +19,6 @@ export class BinarySearchNode<T> {
     this.value = value;
   }
 
-  static from<T>(node: BinarySearchNode<T>): BinarySearchNode<T> {
-    const copy: BinarySearchNode<T> = new BinarySearchNode(
-      node.parent,
-      node.value,
-    );
-
-    copy.left = node.left;
-
-    copy.right = node.right;
-
-    return copy;
-  }
-
   directionFromParent(): Direction | null {
     if (this.parent === null) {
       return null;

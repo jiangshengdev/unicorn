@@ -27,53 +27,6 @@ export class BinaryHeap<T> implements Iterable<T> {
     return Array.from(this.#data);
   }
 
-  static from<T>(
-    collection: ArrayLike<T> | Iterable<T> | BinaryHeap<T>,
-    options?: {
-      compare?: (a: T, b: T) => number;
-    },
-  ): BinaryHeap<T>;
-
-  static from<T, U, V = undefined>(
-    collection: ArrayLike<T> | Iterable<T> | BinaryHeap<T>,
-    options: {
-      compare?: (a: U, b: U) => number;
-      map: (value: T, index: number) => U;
-      thisArg?: V;
-    },
-  ): BinaryHeap<U>;
-  static from<T, U, V>(
-    collection: ArrayLike<T> | Iterable<T> | BinaryHeap<T>,
-    options?: {
-      compare?: (a: U, b: U) => number;
-      map?: (value: T, index: number) => U;
-      thisArg?: V;
-    },
-  ): BinaryHeap<U> {
-    let result: BinaryHeap<U>;
-    let unmappedValues: ArrayLike<T> | Iterable<T> = [];
-    if (collection instanceof BinaryHeap) {
-      result = new BinaryHeap(
-        options?.compare ?? (collection as unknown as BinaryHeap<U>).#compare,
-      );
-      if (options?.compare || options?.map) {
-        unmappedValues = collection.#data;
-      } else {
-        result.#data = Array.from(collection.#data as unknown as U[]);
-      }
-    } else {
-      result = options?.compare
-        ? new BinaryHeap(options.compare)
-        : new BinaryHeap();
-      unmappedValues = collection;
-    }
-    const values: Iterable<U> = options?.map
-      ? Array.from(unmappedValues, options.map, options.thisArg)
-      : (unmappedValues as U[]);
-    result.push(...values);
-    return result;
-  }
-
   get length(): number {
     return this.#data.length;
   }

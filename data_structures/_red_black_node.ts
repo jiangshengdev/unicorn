@@ -15,15 +15,4 @@ export class RedBlackNode<T> extends BinarySearchNode<T> {
 
     this.red = true;
   }
-
-  static override from<T>(node: RedBlackNode<T>): RedBlackNode<T> {
-    const copy: RedBlackNode<T> = new RedBlackNode(node.parent, node.value);
-
-    copy.left = node.left;
-
-    copy.right = node.right;
-
-    copy.red = node.red;
-    return copy;
-  }
 }
