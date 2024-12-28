@@ -5,13 +5,10 @@ import { internals } from './_binary_search_tree_internals.ts';
 
 const {
   getRoot,
-  setRoot,
-  getCompare,
   findNode,
   rotateNode,
   insertNode,
   removeNode,
-  setSize,
 } = internals;
 
 export class RedBlackTree<T> extends BinarySearchTree<T> {
