@@ -1,6 +1,7 @@
 import { RedBlackTree } from '../data_structures/red_black_tree.ts';
 import { RedBlackNode } from '../data_structures/_red_black_node.js';
 import { internals } from '../data_structures/_binary_search_tree_internals.js';
+import chalk from 'chalk';
 
 const { getRoot } = internals;
 
@@ -88,7 +89,7 @@ export function printRedBlackTree<T>(tree: RedBlackTree<T>): void {
     const col = Math.floor((x + 1) * (totalWidth / 2 ** height));
 
     // 节点显示内容：值 + (R) 或 (B)
-    const text = `${node.value}${node.red ? '(R)' : '(B)'}`;
+    const text = `${node.value}${node.red ? '|R' : '|B'}`;
 
     // 将节点值写到画布中，尽量居中
     const startCol = col - Math.floor(text.length / 2);
@@ -142,7 +143,12 @@ export function printRedBlackTree<T>(tree: RedBlackTree<T>): void {
 
   // 将每行数组合并为字符串，并去除尾部空格
   for (let i = 0; i < lines.length; i++) {
-    console.log(lines[i].join('').trimEnd());
+    let lineStr = lines[i].join('').trimEnd();
+    // 使用正则替换整个节点文本并应用chalk颜色
+    lineStr = lineStr
+      .replace(/(\d+)\|R/g, (match, p1) => chalk.white.bgRed(` ${p1} `))
+      .replace(/(\d+)\|B/g, (match, p1) => chalk.white.bgBlack(` ${p1} `));
+    console.log(lineStr);
   }
 }
 
@@ -152,7 +158,12 @@ function main() {
 
   for (let num of numbers) {
     tree.insert(num);
+    console.log();
+    console.log(`Insert ${num}:`);
+
+    console.log();
     printRedBlackTree(tree);
+    console.log();
   }
 }
 

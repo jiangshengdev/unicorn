@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "run": "tsx debug/binary_search_tree.ts",
-    "format": "prettier data_structures --write"
+    "format": "prettier data_structures debug --write"
   },
   "keywords": [],
   "author": "Jiang Sheng",
