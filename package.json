@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
+    "run": "tsx debug/binary_search_tree.ts",
     "format": "prettier data_structures --write"
   },
   "keywords": [],
@@ -16,5 +18,9 @@
     "prettier": "3.4.2",
     "ts-jest": "^29.2.5",
     "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "tsx": "^4.19.2"
   }
 }
